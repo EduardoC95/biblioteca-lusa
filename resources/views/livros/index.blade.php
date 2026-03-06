@@ -1,4 +1,4 @@
-<x-app-layout>
+Ôªø<x-app-layout>
     <x-slot name="header">
         <div class="flex flex-wrap items-center justify-between gap-3">
             <h2 class="font-display text-3xl text-cyan-200">Livros</h2>
@@ -28,8 +28,8 @@
             @endforeach
         </select>
 
-        <input type="number" step="0.01" min="0" name="preco_min" value="{{ $filters['preco_min'] }}" placeholder="PreÁo min" class="input input-bordered" />
-        <input type="number" step="0.01" min="0" name="preco_max" value="{{ $filters['preco_max'] }}" placeholder="PreÁo max" class="input input-bordered" />
+        <input type="number" step="0.01" min="0" name="preco_min" value="{{ $filters['preco_min'] }}" placeholder="Pre√ßo min" class="input input-bordered" />
+        <input type="number" step="0.01" min="0" name="preco_max" value="{{ $filters['preco_max'] }}" placeholder="Pre√ßo max" class="input input-bordered" />
 
         <div class="md:col-span-6 flex gap-2">
             <button class="btn btn-primary" type="submit">Aplicar</button>
@@ -82,10 +82,10 @@
                     </th>
                     <th>
                         <a href="{{ $sortUrl('preco') }}" class="inline-flex items-center gap-1 hover:underline">
-                            <span>{!! $sortArrow('preco') !!}</span><span>PreÁo</span>
+                            <span>{!! $sortArrow('preco') !!}</span><span>Pre√ßo</span>
                         </a>
                     </th>
-                    <th class="text-right">AÁıes</th>
+                    <th class="text-right">A√ß√µes</th>
                 </tr>
             </thead>
             <tbody>
@@ -108,7 +108,7 @@
                         <td class="font-semibold"><a href="{{ route('livros.show', $livro) }}" class="text-cyan-200 hover:text-cyan-100 underline-offset-4 hover:underline">{{ $livro->nome }}</a></td>
                         <td>
                             <span class="badge {{ $livro->requisicaoAtiva ? 'badge-warning' : 'badge-success' }}">
-                                {{ $livro->requisicaoAtiva ? 'IndisponÌvel' : 'DisponÌvel' }}
+                                {{ $livro->requisicaoAtiva ? 'Indispon√≠vel' : 'Dispon√≠vel' }}
                             </span>
                         </td>
                         <td>
@@ -153,3 +153,4 @@
 
     <div class="mt-4">{{ $livros->links() }}</div>
 </x-app-layout>
+

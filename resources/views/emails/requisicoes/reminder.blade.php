@@ -1,9 +1,10 @@
-@php
+Ôªø@php
     $livro = $requisicao->livro;
 @endphp
 
 <h2>Lembrete de entrega</h2>
-<p>A requisiÁ„o <strong>#{{ $requisicao->numero_sequencial }}</strong> vence amanh„.</p>
+<p>A requisi√ß√£o <strong>#{{ $requisicao->numero_sequencial }}</strong> vence amanh√£.</p>
 <p><strong>Livro:</strong> {{ $livro?->nome }}</p>
 <p><strong>Data prevista de entrega:</strong> {{ $requisicao->data_prevista_entrega?->format('d/m/Y') }}</p>
 <p>Por favor, entregue o livro dentro do prazo.</p>
+

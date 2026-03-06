@@ -1,15 +1,15 @@
-<x-app-layout>
+ï»¿<x-app-layout>
     <x-slot name="header">
-        <h2 class="font-display text-3xl text-cyan-200">Requisições</h2>
+        <h2 class="font-display text-3xl text-cyan-200">RequisiÃ§Ãµes</h2>
     </x-slot>
 
     <div class="grid gap-3 md:grid-cols-3">
         <div class="rounded-xl border border-cyan-300/20 bg-slate-900/70 p-4">
-            <p class="text-xs uppercase tracking-widest text-cyan-300"># Requisições Ativas</p>
+            <p class="text-xs uppercase tracking-widest text-cyan-300"># RequisiÃ§Ãµes Ativas</p>
             <p class="mt-2 text-3xl font-semibold">{{ $indicadores['ativas'] }}</p>
         </div>
         <div class="rounded-xl border border-cyan-300/20 bg-slate-900/70 p-4">
-            <p class="text-xs uppercase tracking-widest text-cyan-300"># Requisições últimos 30 dias</p>
+            <p class="text-xs uppercase tracking-widest text-cyan-300"># RequisiÃ§Ãµes Ãºltimos 30 dias</p>
             <p class="mt-2 text-3xl font-semibold">{{ $indicadores['ultimos_30_dias'] }}</p>
         </div>
         <div class="rounded-xl border border-cyan-300/20 bg-slate-900/70 p-4">
@@ -21,7 +21,7 @@
     <form method="POST" action="{{ route('requisicoes.store') }}" class="mt-6 grid gap-3 rounded-xl border border-cyan-300/20 bg-slate-900/70 p-4 md:grid-cols-4">
         @csrf
         <div class="md:col-span-2">
-            <x-label value="Livro disponível" />
+            <x-label value="Livro disponÃ­vel" />
             <select name="livro_id" class="select select-bordered w-full" required>
                 <option value="">Selecione...</option>
                 @foreach ($livrosDisponiveis as $livro)
@@ -35,7 +35,7 @@
 
         @if (auth()->user()->isAdmin())
             <div class="md:col-span-1">
-                <x-label value="Cidadão" />
+                <x-label value="CidadÃ£o" />
                 <select name="cidadao_id" class="select select-bordered w-full" required>
                     <option value="">Selecione...</option>
                     @foreach ($cidadaos as $cidadao)
@@ -57,12 +57,12 @@
                 <tr>
                     <th>#</th>
                     <th>Livro</th>
-                    <th>Cidadão</th>
-                    <th>Início</th>
+                    <th>CidadÃ£o</th>
+                    <th>InÃ­cio</th>
                     <th>Fim previsto</th>
                     <th>Fim real</th>
                     <th>Dias</th>
-                    <th class="text-right">Ações</th>
+                    <th class="text-right">AÃ§Ãµes</th>
                 </tr>
             </thead>
             <tbody>
@@ -92,7 +92,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="8" class="text-center">Sem requisições.</td>
+                        <td colspan="8" class="text-center">Sem requisiÃ§Ãµes.</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -101,3 +101,4 @@
 
     <div class="mt-4">{{ $requisicoes->links() }}</div>
 </x-app-layout>
+

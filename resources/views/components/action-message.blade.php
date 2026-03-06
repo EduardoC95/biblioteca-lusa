@@ -1,4 +1,4 @@
-@props(['on'])
+﻿@props(['on'])
 
 <div x-data="{ shown: false, timeout: null }"
     x-init="@this.on('{{ $on }}', () => { clearTimeout(timeout); shown = true; timeout = setTimeout(() => { shown = false }, 2000); })"
@@ -8,3 +8,4 @@
     {{ $attributes->merge(['class' => 'text-sm text-cyan-200']) }}>
     {{ $slot->isEmpty() ? 'Saved.' : $slot }}
 </div>
+

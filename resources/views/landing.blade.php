@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-theme="woodhaven">
     <head>
         <meta charset="utf-8">
@@ -20,11 +20,12 @@
                 <div class="mt-10 flex flex-wrap items-center justify-center gap-3">
                     <a href="{{ route('register') }}" class="btn btn-primary">Iniciar Interface</a>
                     <a href="{{ route('login') }}" class="btn btn-outline">Login Direto</a>
-                    <a href="{{ route('catalogo.index') }}" class="btn btn-secondary">Ver Cat�logo</a>
+                    <a href="{{ route('catalogo.index') }}" class="btn btn-secondary">Ver Catálogo</a>
                 </div>
             </section>
         </div>
     </body>
 </html>
+
 
 

@@ -1,6 +1,6 @@
-<x-app-layout>
+Ôªø<x-app-layout>
     <x-slot name="header">
-        <h2 class="font-display text-3xl text-cyan-200">Cat·logo</h2>
+        <h2 class="font-display text-3xl text-cyan-200">Cat√°logo</h2>
     </x-slot>
 
     <form method="GET" class="mb-6 rounded-xl border border-cyan-300/20 bg-slate-900/70 p-4">
@@ -11,7 +11,7 @@
         @forelse ($livros as $livro)
             <article class="rounded-xl border border-cyan-300/20 bg-slate-900/70 p-4">
                 <p class="text-xs uppercase tracking-widest {{ $livro->requisicaoAtiva ? 'text-amber-300' : 'text-emerald-300' }}">
-                    {{ $livro->requisicaoAtiva ? 'IndisponÌvel' : 'DisponÌvel' }}
+                    {{ $livro->requisicaoAtiva ? 'Indispon√≠vel' : 'Dispon√≠vel' }}
                 </p>
                 <h2 class="mt-2 text-xl font-semibold text-cyan-100">
                     <a href="{{ route('catalogo.show', $livro) }}" class="hover:underline">{{ $livro->nome }}</a>
@@ -27,7 +27,8 @@
                 </div>
             </article>
         @empty
-            <p class="text-slate-400">Sem livros no cat·logo.</p>
+            <p class="text-slate-400">Sem livros no cat√°logo.</p>
         @endforelse
     </div>
 </x-app-layout>
+

@@ -1,4 +1,4 @@
-<div class="md:col-span-1 flex justify-between">
+﻿<div class="md:col-span-1 flex justify-between">
     <div class="px-1 sm:px-0">
         <h3 class="font-display text-lg text-cyan-200">{{ $title }}</h3>
 
@@ -11,3 +11,4 @@
         {{ $aside ?? '' }}
     </div>
 </div>
+

@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <h2 class="font-display text-3xl text-cyan-200">Editar Editora</h2>
     </x-slot>
@@ -33,5 +33,6 @@
         </div>
     </form>
 </x-app-layout>
+
 
 

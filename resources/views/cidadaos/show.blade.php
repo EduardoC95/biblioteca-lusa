@@ -1,4 +1,4 @@
-<x-app-layout>
+ï»¿<x-app-layout>
     <x-slot name="header">
         <h2 class="font-display text-3xl text-cyan-200">{{ $cidadao->name }}</h2>
     </x-slot>
@@ -14,14 +14,14 @@
         </div>
 
         <div class="rounded-xl border border-cyan-300/20 bg-slate-900/70 p-5">
-            <h3 class="font-display text-2xl text-cyan-200">Histórico de requisições</h3>
+            <h3 class="font-display text-2xl text-cyan-200">HistÃ³rico de requisiÃ§Ãµes</h3>
             <div class="mt-3 overflow-x-auto">
                 <table class="table table-sm">
                     <thead>
                         <tr>
                             <th>#</th>
                             <th>Livro</th>
-                            <th>Início</th>
+                            <th>InÃ­cio</th>
                             <th>Fim previsto</th>
                             <th>Fim real</th>
                             <th>Dias</th>
@@ -39,7 +39,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center">Sem requisições.</td>
+                                <td colspan="6" class="text-center">Sem requisiÃ§Ãµes.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -48,3 +48,4 @@
         </div>
     </div>
 </x-app-layout>
+

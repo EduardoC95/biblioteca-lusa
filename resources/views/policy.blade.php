@@ -1,4 +1,4 @@
-<x-guest-layout>
+﻿<x-guest-layout>
     <div class="pt-4 bg-slate-900/70">
         <div class="min-h-screen flex flex-col items-center pt-6 sm:pt-0">
             <div>
@@ -11,5 +11,6 @@
         </div>
     </div>
 </x-guest-layout>
+
 
 

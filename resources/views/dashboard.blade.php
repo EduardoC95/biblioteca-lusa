@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <h2 class="font-display text-3xl text-cyan-200">Painel da Biblioteca</h2>
     </x-slot>
@@ -118,5 +118,6 @@
         </section>
     </div>
 </x-app-layout>
+
 
 

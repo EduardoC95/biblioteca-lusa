@@ -1,4 +1,4 @@
-<x-app-layout>
+Ôªø<x-app-layout>
     <x-slot name="header">
         <h2 class="font-display text-3xl text-cyan-200">{{ $livro->nome }}</h2>
     </x-slot>
@@ -17,7 +17,7 @@
                 <h3 class="font-display text-xl text-cyan-200">Estado</h3>
                 <p class="mt-2">
                     <span class="badge {{ $livro->requisicoes->firstWhere('data_real_entrega', null) ? 'badge-warning' : 'badge-success' }}">
-                        {{ $livro->requisicoes->firstWhere('data_real_entrega', null) ? 'IndisponÌvel para requisiÁ„o' : 'DisponÌvel para requisiÁ„o' }}
+                        {{ $livro->requisicoes->firstWhere('data_real_entrega', null) ? 'Indispon√≠vel para requisi√ß√£o' : 'Dispon√≠vel para requisi√ß√£o' }}
                     </span>
                 </p>
                 <div class="mt-3">
@@ -41,7 +41,7 @@
 
             <div class="rounded-xl border border-cyan-300/20 bg-slate-900/70 p-5">
                 <h3 class="font-display text-xl text-cyan-200">Sinopse</h3>
-                <p class="mt-3 whitespace-pre-line text-slate-200">{{ $livro->sinopse ?: 'Sem sinopse disponÌvel.' }}</p>
+                <p class="mt-3 whitespace-pre-line text-slate-200">{{ $livro->sinopse ?: 'Sem sinopse dispon√≠vel.' }}</p>
             </div>
 
             <div class="rounded-xl border border-cyan-300/20 bg-slate-900/70 p-5">
@@ -51,21 +51,21 @@
                         <p class="mt-1 text-slate-100">{{ $livro->isbn }}</p>
                     </div>
                     <div>
-                        <p class="text-xs uppercase tracking-widest text-cyan-300">PreÁo</p>
+                        <p class="text-xs uppercase tracking-widest text-cyan-300">Pre√ßo</p>
                         <p class="mt-1 text-slate-100">{{ number_format((float) $livro->preco, 2, ',', '.') }} EUR</p>
                     </div>
                 </div>
             </div>
 
             <div class="rounded-xl border border-cyan-300/20 bg-slate-900/70 p-5">
-                <h3 class="font-display text-xl text-cyan-200">HistÛrico de requisiÁıes</h3>
+                <h3 class="font-display text-xl text-cyan-200">Hist√≥rico de requisi√ß√µes</h3>
                 <div class="mt-3 overflow-x-auto">
                     <table class="table table-sm">
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Cidad„o</th>
-                                <th>InÌcio</th>
+                                <th>Cidad√£o</th>
+                                <th>In√≠cio</th>
                                 <th>Prevista</th>
                                 <th>Real</th>
                                 <th>Dias</th>
@@ -83,7 +83,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="text-center">Sem histÛrico.</td>
+                                    <td colspan="6" class="text-center">Sem hist√≥rico.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -100,3 +100,4 @@
         </div>
     </div>
 </x-app-layout>
+

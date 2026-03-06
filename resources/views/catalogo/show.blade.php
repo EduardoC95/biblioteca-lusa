@@ -1,9 +1,9 @@
-<x-app-layout>
+Ôªø<x-app-layout>
     <x-slot name="header">
-        <h2 class="font-display text-3xl text-cyan-200">Detalhe do Cat·logo</h2>
+        <h2 class="font-display text-3xl text-cyan-200">Detalhe do Cat√°logo</h2>
     </x-slot>
 
-    <a href="{{ route('catalogo.index') }}" class="btn btn-outline btn-sm">Voltar ao cat·logo</a>
+    <a href="{{ route('catalogo.index') }}" class="btn btn-outline btn-sm">Voltar ao cat√°logo</a>
 
     <div class="mt-4 grid gap-6 rounded-xl border border-cyan-300/20 bg-slate-900/70 p-5 lg:grid-cols-[260px_minmax(0,1fr)]">
         <div>
@@ -16,12 +16,12 @@
 
         <div>
             <p class="text-xs uppercase tracking-widest {{ $livro->requisicaoAtiva ? 'text-amber-300' : 'text-emerald-300' }}">
-                {{ $livro->requisicaoAtiva ? 'IndisponÌvel para requisiÁ„o' : 'DisponÌvel para requisiÁ„o' }}
+                {{ $livro->requisicaoAtiva ? 'Indispon√≠vel para requisi√ß√£o' : 'Dispon√≠vel para requisi√ß√£o' }}
             </p>
             <h1 class="mt-2 font-display text-4xl text-cyan-100">{{ $livro->nome }}</h1>
             <p class="mt-2 text-slate-200">ISBN {{ $livro->isbn }}</p>
             <p class="text-slate-200">Editora: {{ $livro->editora?->nome ?? '-' }}</p>
-            <p class="mt-3 whitespace-pre-line text-slate-300">{{ $livro->sinopse ?: 'Sem sinopse disponÌvel.' }}</p>
+            <p class="mt-3 whitespace-pre-line text-slate-300">{{ $livro->sinopse ?: 'Sem sinopse dispon√≠vel.' }}</p>
 
             <div class="mt-4 flex flex-wrap gap-2">
                 @foreach ($livro->autores as $autor)
@@ -35,3 +35,4 @@
         </div>
     </div>
 </x-app-layout>
+

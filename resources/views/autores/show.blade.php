@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <h2 class="font-display text-3xl text-cyan-200">{{ $autor->nome }}</h2>
     </x-slot>
@@ -39,5 +39,6 @@
         </div>
     </div>
 </x-app-layout>
+
 
 

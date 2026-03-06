@@ -1,4 +1,4 @@
-@props(['team', 'component' => 'dropdown-link'])
+﻿@props(['team', 'component' => 'dropdown-link'])
 
 <form method="POST" action="{{ route('current-team.update') }}" x-data>
     @method('PUT')
@@ -19,3 +19,4 @@
         </div>
     </x-dynamic-component>
 </form>
+

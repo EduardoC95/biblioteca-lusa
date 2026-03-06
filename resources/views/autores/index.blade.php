@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <x-slot name="header">
         <div class="flex flex-wrap items-center justify-between gap-3">
             <h2 class="font-display text-3xl text-cyan-200">Autores</h2>
@@ -75,4 +75,5 @@
 
     <div class="mt-4">{{ $autores->links() }}</div>
 </x-app-layout>
+
 

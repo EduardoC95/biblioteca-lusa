@@ -1,6 +1,6 @@
-<x-app-layout>
+Ôªø<x-app-layout>
     <x-slot name="header">
-        <h2 class="font-display text-3xl text-cyan-200">Cidad„os</h2>
+        <h2 class="font-display text-3xl text-cyan-200">Cidad√£os</h2>
     </x-slot>
 
     <div class="grid gap-6 lg:grid-cols-2">
@@ -32,7 +32,7 @@
         </section>
 
         <section class="rounded-xl border border-cyan-300/20 bg-slate-900/70 p-5">
-            <h3 class="font-display text-2xl text-cyan-200">Lista de Cidad„os</h3>
+            <h3 class="font-display text-2xl text-cyan-200">Lista de Cidad√£os</h3>
             <div class="mt-3 space-y-2">
                 @forelse ($cidadaos as $cidadao)
                     <a href="{{ route('cidadaos.show', $cidadao) }}" class="flex items-center justify-between rounded-lg border border-cyan-300/20 bg-slate-950/50 p-3 hover:border-cyan-300/40">
@@ -40,10 +40,11 @@
                         <span class="text-sm text-slate-400">Ativas: {{ $cidadao->requisicoes_ativas_count }}</span>
                     </a>
                 @empty
-                    <p class="text-slate-400">Sem cidad„os registados.</p>
+                    <p class="text-slate-400">Sem cidad√£os registados.</p>
                 @endforelse
             </div>
             <div class="mt-4">{{ $cidadaos->links() }}</div>
         </section>
     </div>
 </x-app-layout>
+

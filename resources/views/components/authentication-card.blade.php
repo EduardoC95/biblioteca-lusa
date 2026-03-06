@@ -1,4 +1,4 @@
-<div class="min-h-screen flex flex-col sm:justify-center items-center px-4 py-8">
+﻿<div class="min-h-screen flex flex-col sm:justify-center items-center px-4 py-8">
     <div>
         {{ $logo }}
     </div>
@@ -7,3 +7,4 @@
         {{ $slot }}
     </div>
 </div>
+
