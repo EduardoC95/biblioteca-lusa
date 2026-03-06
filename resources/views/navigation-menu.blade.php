@@ -39,7 +39,7 @@
         @auth
             <button type="button" @click="profileOpen = !profileOpen" class="btn btn-outline btn-primary w-full justify-between">
                 <span>{{ auth()->user()->name }}</span>
-                <span>{{ auth()->user()->isAdmin() ? 'Admin' : 'Cidad&atilde;o' }}</span>
+                <span>{{ auth()->user()->isAdmin() ? 'Admin' : 'Cidadão' }}</span>
             </button>
 
             <div x-show="profileOpen" x-transition class="mt-2 space-y-2" x-cloak>
@@ -60,3 +60,4 @@
         @endauth
     </div>
 </div>
+
