@@ -39,15 +39,15 @@
                         </div>
                     </div>
 
-                    <div class="w-20 shrink-0">
+                    <div class="shrink-0 overflow-hidden rounded border border-cyan-300/20" style="width: 80px; height: 112px;">
                         @if ($livro->capa_imagem)
                             <img
                                 src="{{ \Illuminate\Support\Facades\Storage::url($livro->capa_imagem) }}"
                                 alt="Capa de {{ $livro->nome }}"
-                                class="h-28 w-20 rounded object-cover border border-cyan-300/20"
+                                style="width: 80px; height: 112px; object-fit: cover; display: block;"
                             />
                         @else
-                            <div class="flex h-28 w-20 items-center justify-center rounded border border-dashed border-cyan-300/30 text-[10px] text-slate-500">
+                            <div class="flex items-center justify-center text-[10px] text-slate-500" style="width: 80px; height: 112px;">
                                 sem capa
                             </div>
                         @endif
