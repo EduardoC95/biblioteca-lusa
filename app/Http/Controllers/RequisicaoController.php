@@ -74,7 +74,7 @@ class RequisicaoController extends Controller
 
             if ($livroAtivo) {
                 throw ValidationException::withMessages([
-                    'livro_id' => 'Este livro já está numa requisição ativa.',
+                    'livro_id' => 'Este livro jÃ¡ estÃ¡ numa requisiÃ§Ã£o ativa.',
                 ]);
             }
 
@@ -85,7 +85,7 @@ class RequisicaoController extends Controller
 
             if ($requisicoesAtivasCidadao >= 3) {
                 throw ValidationException::withMessages([
-                    'cidadao_id' => 'Cada cidadão só pode ter 3 livros requisitados em simultâneo.',
+                    'cidadao_id' => 'Cada cidadÃ£o sÃ³ pode ter 3 livros requisitados em simultÃ¢neo.',
                 ]);
             }
 
@@ -123,13 +123,13 @@ class RequisicaoController extends Controller
 
         return redirect()
             ->route('requisicoes.index')
-            ->with('status', 'Requisição criada com sucesso.');
+            ->with('status', 'Requisi&ccedil;&atilde;o criada com sucesso.');
     }
 
     public function confirmarEntrega(ConfirmarEntregaRequest $request, Requisicao $requisicao): RedirectResponse
     {
         if ($requisicao->data_real_entrega) {
-            return back()->with('status', 'Esta requisição já foi finalizada.');
+            return back()->with('status', 'Esta requisi&ccedil;&atilde;o j&aacute; foi finalizada.');
         }
 
         $dataEntrega = CarbonImmutable::parse($request->validated('data_real_entrega'));
@@ -144,3 +144,4 @@ class RequisicaoController extends Controller
         return back()->with('status', 'Entrega confirmada com sucesso.');
     }
 }
+

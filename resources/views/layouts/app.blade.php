@@ -38,7 +38,7 @@
 
                     @if (session('status'))
                         <div class="alert alert-success mb-6 shadow-md">
-                            <span>{{ session('status') }}</span>
+                            <span>{{ html_entity_decode((string) session('status')) }}</span>
                         </div>
                     @endif
 
@@ -53,6 +53,7 @@
         @livewireScripts
     </body>
 </html>
+
 
 
 
