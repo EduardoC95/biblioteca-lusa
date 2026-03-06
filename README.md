@@ -145,7 +145,3 @@ Checklist recomendado antes de deploy:
 - Cache de config/rotas/views gerada
 - Storage link ativo
 - Build de assets atualizado
-
----
-
-Projeto academico/profissional para apresentacao de estagio: **Biblioteca Lusa**.
