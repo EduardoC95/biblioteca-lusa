@@ -1,4 +1,4 @@
-﻿@php
+@php
     $livro = $requisicao->livro;
 @endphp
 

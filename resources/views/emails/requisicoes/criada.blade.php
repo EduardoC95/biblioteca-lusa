@@ -1,4 +1,4 @@
-﻿@php
+@php
     $livro = $requisicao->livro;
     $capaUrl = $livro && $livro->capa_imagem ? \Illuminate\Support\Facades\Storage::url($livro->capa_imagem) : null;
 @endphp

@@ -1,4 +1,4 @@
-﻿<div class="flex h-full flex-col" x-data="{ profileOpen: false }">
+<div class="flex h-full flex-col" x-data="{ profileOpen: false }">
     <a href="{{ route('dashboard') }}" class="rounded-xl border border-cyan-300/25 bg-slate-950/70 px-4 py-5 font-display text-3xl tracking-wide text-cyan-300">
         Biblioteca Lusa
     </a>
