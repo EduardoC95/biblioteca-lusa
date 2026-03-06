@@ -14,17 +14,18 @@
         </div>
 
         <div class="rounded-xl border border-cyan-300/20 bg-slate-900/70 p-5">
-            <h3 class="font-display text-2xl text-cyan-200">Histórico de requisições</h3>
+            <h3 class="font-display text-2xl text-cyan-200">Hist&oacute;rico de requisi&ccedil;&otilde;es</h3>
             <div class="mt-3 overflow-x-auto">
                 <table class="table table-sm">
                     <thead>
                         <tr>
                             <th>#</th>
                             <th>Livro</th>
-                            <th>Início</th>
+                            <th>In&iacute;cio</th>
                             <th>Fim previsto</th>
                             <th>Fim real</th>
                             <th>Dias</th>
+                            <th class="text-right">A&ccedil;&otilde;es</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -36,10 +37,24 @@
                                 <td>{{ $requisicao->data_prevista_entrega?->format('d/m/Y') }}</td>
                                 <td>{{ $requisicao->data_real_entrega?->format('d/m/Y') ?? '-' }}</td>
                                 <td>{{ $requisicao->dias_decorridos ?? $requisicao->dias_em_aberto }}</td>
+                                <td>
+                                    <div class="flex justify-end">
+                                        @if (! $requisicao->data_real_entrega)
+                                            <form method="POST" action="{{ route('requisicoes.confirmar-entrega', $requisicao) }}">
+                                                @csrf
+                                                @method('PATCH')
+                                                <input type="hidden" name="data_real_entrega" value="{{ now()->format('Y-m-d') }}" />
+                                                <button type="submit" class="btn btn-success btn-sm">Devolver livro</button>
+                                            </form>
+                                        @else
+                                            <span class="text-slate-400">-</span>
+                                        @endif
+                                    </div>
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center">Sem requisições.</td>
+                                <td colspan="7" class="text-center">Sem requisi&ccedil;&otilde;es.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -48,4 +63,3 @@
         </div>
     </div>
 </x-app-layout>
-
