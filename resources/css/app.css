@@ -1,0 +1,284 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+[x-cloak] {
+    display: none;
+}
+
+:root {
+    --wood-bg: #efe0c8;
+    --wood-bg-soft: #f7ecd9;
+    --wood-panel: rgba(249, 239, 220, 0.92);
+    --wood-panel-strong: rgba(239, 225, 197, 0.97);
+    --wood-border: rgba(122, 84, 48, 0.35);
+    --wood-border-strong: rgba(107, 72, 38, 0.5);
+    --wood-text: #3f2d1d;
+    --wood-text-muted: #6b4f35;
+    --wood-heading: #2f1f12;
+    --wood-link: #7a4f2a;
+    --wood-link-hover: #5f3b1e;
+}
+
+body {
+    min-height: 100vh;
+    color: var(--wood-text);
+    background-color: var(--wood-bg);
+    background-image:
+        radial-gradient(circle at 16% 18%, rgba(173, 125, 78, 0.28), transparent 42%),
+        radial-gradient(circle at 84% 10%, rgba(192, 156, 116, 0.25), transparent 34%),
+        linear-gradient(120deg, #f5e8d1 0%, #ecdbc0 46%, #e4cfb0 100%);
+}
+
+.neo-panel {
+    border: 1px solid var(--wood-border);
+    border-radius: 1rem;
+    background: linear-gradient(165deg, var(--wood-panel), var(--wood-panel-strong));
+    box-shadow: 0 12px 28px rgba(83, 54, 31, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(4px);
+}
+
+.neon-border {
+    position: relative;
+}
+
+.neon-border::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    pointer-events: none;
+    border-radius: 1rem;
+    border: 1px solid rgba(126, 88, 51, 0.32);
+    box-shadow: 0 0 0 1px rgba(255, 244, 226, 0.5) inset;
+}
+
+.scanline {
+    position: relative;
+}
+
+.scanline::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        to bottom,
+        transparent,
+        transparent 6px,
+        rgba(114, 83, 53, 0.03) 7px
+    );
+}
+
+/* Remove white cards and unify warm palette */
+.bg-base-100,
+.bg-white,
+[class*="bg-slate"],
+[class*="bg-gray"] {
+    background-color: var(--wood-panel) !important;
+    color: var(--wood-text) !important;
+}
+
+/* Warm utility overrides for current markup classes */
+[class*="text-cyan"],
+.text-slate-100,
+.text-slate-200,
+.text-slate-300,
+.text-slate-400,
+.text-slate-500 {
+    color: var(--wood-text) !important;
+}
+
+[class*="border-cyan"],
+.border-slate-700,
+.border-slate-800,
+.border-slate-900 {
+    border-color: var(--wood-border) !important;
+}
+
+.text-white {
+    color: var(--wood-text) !important;
+}
+
+.btn {
+    min-height: 2.55rem !important;
+    height: 2.55rem !important;
+    padding: 0 1rem !important;
+    border-radius: 0.65rem !important;
+    border: 1px solid var(--wood-border-strong) !important;
+    background: linear-gradient(180deg, #f0ddbe, #e2c9a5) !important;
+    color: var(--wood-heading) !important;
+    box-shadow: 0 2px 8px rgba(88, 61, 39, 0.14) !important;
+}
+
+.btn:hover {
+    background: linear-gradient(180deg, #ead2ad, #d9bd94) !important;
+}
+
+.btn-primary {
+    background: linear-gradient(180deg, #9b6a3b, #7d4f2a) !important;
+    border-color: rgba(90, 57, 29, 0.75) !important;
+    color: #fff5e6 !important;
+}
+
+.btn-secondary {
+    background: linear-gradient(180deg, #be936b, #a7784e) !important;
+    border-color: rgba(112, 77, 45, 0.65) !important;
+    color: #fff7ea !important;
+}
+
+.btn-outline {
+    background: #f2e3c9 !important;
+    color: var(--wood-heading) !important;
+}
+
+.btn-error {
+    background: linear-gradient(180deg, #a55244, #8f4035) !important;
+    border-color: rgba(109, 44, 37, 0.8) !important;
+    color: #fff2ef !important;
+}
+
+.input,
+.select,
+.textarea,
+.file-input {
+    background-color: #fbf4e7 !important;
+    color: var(--wood-text) !important;
+    border-color: var(--wood-border) !important;
+    border-radius: 0.6rem !important;
+}
+
+.file-input::file-selector-button {
+    background: #e8d2b1 !important;
+    color: var(--wood-heading) !important;
+    border-right: 1px solid var(--wood-border) !important;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+    color: #8a6b4d !important;
+}
+
+.select option {
+    background-color: #f8efde;
+    color: var(--wood-text);
+}
+
+.table {
+    color: var(--wood-text) !important;
+}
+
+.table thead th {
+    color: var(--wood-heading) !important;
+    border-bottom: 1px solid var(--wood-border);
+    background: rgba(214, 187, 152, 0.35);
+}
+
+.futuristic-table tbody tr {
+    border-bottom: 1px solid rgba(128, 93, 58, 0.22);
+    transition: background-color 0.15s ease;
+}
+
+.futuristic-table tbody tr:hover {
+    background-color: rgba(191, 153, 109, 0.22);
+}
+
+.badge {
+    border-color: rgba(128, 93, 58, 0.35) !important;
+    background: rgba(223, 198, 163, 0.55) !important;
+    color: var(--wood-heading) !important;
+}
+
+.menu li > a.active,
+.menu li > a:hover {
+    background: rgba(190, 151, 106, 0.28) !important;
+    color: var(--wood-heading) !important;
+}
+
+a {
+    color: var(--wood-link);
+}
+
+a:hover {
+    color: var(--wood-link-hover);
+}
+
+/* UX and visual consistency improvements */
+h1, h2, h3, h4 {
+    color: var(--wood-heading);
+    line-height: 1.15;
+}
+
+p, li, td, th, label, span {
+    line-height: 1.45;
+}
+
+.label .label-text {
+    font-weight: 700;
+    color: var(--wood-text-muted) !important;
+}
+
+.neo-panel,
+form.rounded-xl,
+section.rounded-xl,
+.table,
+.menu li > a,
+.btn,
+.input,
+.select,
+.textarea,
+.file-input {
+    transition: box-shadow 0.18s ease, transform 0.18s ease, border-color 0.18s ease, background-color 0.18s ease;
+}
+
+.neo-panel:hover,
+form.rounded-xl:hover,
+section.rounded-xl:hover {
+    box-shadow: 0 14px 28px rgba(83, 54, 31, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.btn:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible,
+button:focus-visible {
+    outline: 2px solid rgba(139, 90, 43, 0.55);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px rgba(166, 124, 82, 0.25);
+}
+
+.table thead th {
+    font-weight: 800;
+}
+
+.table tbody td {
+    vertical-align: middle;
+}
+
+.table tbody tr:hover {
+    transform: translateY(-1px);
+}
+
+.alert {
+    border: 1px solid var(--wood-border);
+    background: #f3e3c7 !important;
+    color: var(--wood-heading) !important;
+}
+
+/* Dark gray highlight for sidebar outer panel and top header panel */
+.sage-panel {
+    border-color: rgba(62, 66, 74, 0.55) !important;
+    background: linear-gradient(165deg, rgba(88, 94, 104, 0.94), rgba(70, 76, 86, 0.96)) !important;
+    box-shadow: 0 12px 26px rgba(29, 31, 36, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.10) !important;
+}
+
+
+
+.modal-backdrop {
+    background: rgba(15, 17, 21, 0.72) !important;
+}
+
