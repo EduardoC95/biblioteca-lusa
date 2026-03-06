@@ -15,9 +15,6 @@ use Illuminate\Support\Facades\Schema;
 
 Route::view('/', 'landing')->name('landing');
 
-Route::get('/catalogo', [CatalogoController::class, 'index'])->name('catalogo.index');
-Route::get('/catalogo/{livro}', [CatalogoController::class, 'show'])->name('catalogo.show');
-
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -53,6 +50,9 @@ Route::middleware([
             'temRequisicoes' => $temRequisicoes,
         ]);
     })->name('dashboard');
+
+    Route::get('/catalogo', [CatalogoController::class, 'index'])->name('catalogo.index');
+    Route::get('/catalogo/{livro}', [CatalogoController::class, 'show'])->name('catalogo.show');
 
     Route::get('/requisicoes', [RequisicaoController::class, 'index'])->name('requisicoes.index');
     Route::post('/requisicoes', [RequisicaoController::class, 'store'])->name('requisicoes.store');
