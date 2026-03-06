@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Livro;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
 class CatalogoController extends Controller
@@ -26,8 +28,10 @@ class CatalogoController extends Controller
             })
             ->values();
 
+        $livrosPaginator = $this->paginateCollection($livros, 10);
+
         return view('catalogo.index', [
-            'livros' => $livros,
+            'livros' => $livrosPaginator,
             'search' => $search,
         ]);
     }
@@ -39,5 +43,22 @@ class CatalogoController extends Controller
         return view('catalogo.show', [
             'livro' => $livro,
         ]);
+    }
+
+    private function paginateCollection(Collection $items, int $perPage): LengthAwarePaginator
+    {
+        $page = LengthAwarePaginator::resolveCurrentPage();
+        $results = $items->slice(($page - 1) * $perPage, $perPage)->values();
+
+        return new LengthAwarePaginator(
+            $results,
+            $items->count(),
+            $perPage,
+            $page,
+            [
+                'path' => LengthAwarePaginator::resolveCurrentPath(),
+                'query' => request()->query(),
+            ]
+        );
     }
 }

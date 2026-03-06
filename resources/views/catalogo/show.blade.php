@@ -1,9 +1,9 @@
 ﻿<x-app-layout>
     <x-slot name="header">
-        <h2 class="font-display text-3xl text-cyan-200">Detalhe do Catálogo</h2>
+        <h2 class="font-display text-3xl text-cyan-200">Detalhe do Cat&aacute;logo</h2>
     </x-slot>
 
-    <a href="{{ route('catalogo.index') }}" class="btn btn-outline btn-sm">Voltar ao catálogo</a>
+    <a href="{{ route('catalogo.index') }}" class="btn btn-outline btn-sm">Voltar ao cat&aacute;logo</a>
 
     <div class="mt-4 grid gap-6 rounded-xl border border-cyan-300/20 bg-slate-900/70 p-5 lg:grid-cols-[260px_minmax(0,1fr)]">
         <div>
@@ -15,7 +15,7 @@
         </div>
 
         <div>
-            <p class="text-xs uppercase tracking-widest {{ $livro->requisicaoAtiva ? 'text-amber-300' : 'text-emerald-300' }}">
+            <p class="text-xs uppercase tracking-widest text-slate-400">
                 {{ $livro->requisicaoAtiva ? 'Indisponível para requisição' : 'Disponível para requisição' }}
             </p>
             <h1 class="mt-2 font-display text-4xl text-cyan-100">{{ $livro->nome }}</h1>
@@ -35,4 +35,6 @@
         </div>
     </div>
 </x-app-layout>
+
+
 
