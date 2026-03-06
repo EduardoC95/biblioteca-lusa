@@ -17,12 +17,12 @@ class DatabaseSeeder extends Seeder
     {
         User::updateOrCreate(
             ['email' => 'admin@biblioteca.test'],
-            ['name' => 'Admin Biblioteca', 'password' => 'password']
+            ['name' => 'Admin Biblioteca', 'password' => 'password', 'role' => User::ROLE_ADMIN]
         );
 
         User::updateOrCreate(
             ['email' => 'editor@biblioteca.test'],
-            ['name' => 'Editor Biblioteca', 'password' => 'password']
+            ['name' => 'Cidadao Demo', 'password' => 'password', 'role' => User::ROLE_CIDADAO]
         );
 
         $this->call(BibliotecaSeeder::class);

@@ -1,8 +1,12 @@
 <?php
 
+use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AutorController;
+use App\Http\Controllers\CatalogoController;
+use App\Http\Controllers\CidadaoController;
 use App\Http\Controllers\EditoraController;
 use App\Http\Controllers\LivroController;
+use App\Http\Controllers\RequisicaoController;
 use App\Models\Autor;
 use App\Models\Editora;
 use App\Models\Livro;
@@ -10,6 +14,9 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 
 Route::view('/', 'landing')->name('landing');
+
+Route::get('/catalogo', [CatalogoController::class, 'index'])->name('catalogo.index');
+Route::get('/catalogo/{livro}', [CatalogoController::class, 'show'])->name('catalogo.show');
 
 Route::middleware([
     'auth:sanctum',
@@ -47,9 +54,23 @@ Route::middleware([
         ]);
     })->name('dashboard');
 
-    Route::get('/livros/exportar/excel', [LivroController::class, 'export'])->name('livros.export');
+    Route::get('/requisicoes', [RequisicaoController::class, 'index'])->name('requisicoes.index');
+    Route::post('/requisicoes', [RequisicaoController::class, 'store'])->name('requisicoes.store');
+    Route::patch('/requisicoes/{requisicao}/confirmar-entrega', [RequisicaoController::class, 'confirmarEntrega'])
+        ->middleware('admin')
+        ->name('requisicoes.confirmar-entrega');
 
-    Route::resource('livros', LivroController::class);
+    Route::resource('livros', LivroController::class)->only(['index', 'show']);
+
+    Route::middleware('admin')->group(function () {
+        Route::get('/livros/exportar/excel', [LivroController::class, 'export'])->name('livros.export');
+        Route::resource('livros', LivroController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
+
+        Route::get('/cidadaos', [CidadaoController::class, 'index'])->name('cidadaos.index');
+        Route::get('/cidadaos/{cidadao}', [CidadaoController::class, 'show'])->name('cidadaos.show');
+        Route::post('/admins', [AdminUserController::class, 'store'])->name('admins.store');
+    });
+
     Route::resource('autores', AutorController::class)
         ->parameters(['autores' => 'autor']);
     Route::resource('editoras', EditoraController::class);

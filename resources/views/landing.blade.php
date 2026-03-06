@@ -20,6 +20,7 @@
                 <div class="mt-10 flex flex-wrap items-center justify-center gap-3">
                     <a href="{{ route('register') }}" class="btn btn-primary">Iniciar Interface</a>
                     <a href="{{ route('login') }}" class="btn btn-outline">Login Direto</a>
+                    <a href="{{ route('catalogo.index') }}" class="btn btn-secondary">Ver Catálogo</a>
                 </div>
             </section>
         </div>

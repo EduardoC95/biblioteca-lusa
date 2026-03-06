@@ -2,10 +2,12 @@
     <x-slot name="header">
         <div class="flex flex-wrap items-center justify-between gap-3">
             <h2 class="font-display text-3xl text-cyan-200">Livros</h2>
-            <div class="flex flex-wrap gap-2">
-                <a href="{{ route('livros.export') }}" class="btn btn-secondary">Exportar Excel</a>
-                <a href="{{ route('livros.create') }}" class="btn btn-primary">Novo Livro</a>
-            </div>
+            @if (auth()->user()->isAdmin())
+                <div class="flex flex-wrap gap-2">
+                    <a href="{{ route('livros.export') }}" class="btn btn-secondary">Exportar Excel</a>
+                    <a href="{{ route('livros.create') }}" class="btn btn-primary">Novo Livro</a>
+                </div>
+            @endif
         </div>
     </x-slot>
 
@@ -26,8 +28,8 @@
             @endforeach
         </select>
 
-        <input type="number" step="0.01" min="0" name="preco_min" value="{{ $filters['preco_min'] }}" placeholder="Pre&ccedil;o min" class="input input-bordered" />
-        <input type="number" step="0.01" min="0" name="preco_max" value="{{ $filters['preco_max'] }}" placeholder="Pre&ccedil;o max" class="input input-bordered" />
+        <input type="number" step="0.01" min="0" name="preco_min" value="{{ $filters['preco_min'] }}" placeholder="Preço min" class="input input-bordered" />
+        <input type="number" step="0.01" min="0" name="preco_max" value="{{ $filters['preco_max'] }}" placeholder="Preço max" class="input input-bordered" />
 
         <div class="md:col-span-6 flex gap-2">
             <button class="btn btn-primary" type="submit">Aplicar</button>
@@ -67,6 +69,7 @@
                             <span>{!! $sortArrow('nome') !!}</span><span>Nome</span>
                         </a>
                     </th>
+                    <th>Estado</th>
                     <th>
                         <a href="{{ $sortUrl('editora') }}" class="inline-flex items-center gap-1 hover:underline">
                             <span>{!! $sortArrow('editora') !!}</span><span>Editora</span>
@@ -79,10 +82,10 @@
                     </th>
                     <th>
                         <a href="{{ $sortUrl('preco') }}" class="inline-flex items-center gap-1 hover:underline">
-                            <span>{!! $sortArrow('preco') !!}</span><span>Pre&ccedil;o</span>
+                            <span>{!! $sortArrow('preco') !!}</span><span>Preço</span>
                         </a>
                     </th>
-                    <th class="text-right">Ac&ccedil;&otilde;es</th>
+                    <th class="text-right">Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -104,6 +107,11 @@
                         </td>
                         <td class="font-semibold"><a href="{{ route('livros.show', $livro) }}" class="text-cyan-200 hover:text-cyan-100 underline-offset-4 hover:underline">{{ $livro->nome }}</a></td>
                         <td>
+                            <span class="badge {{ $livro->requisicaoAtiva ? 'badge-warning' : 'badge-success' }}">
+                                {{ $livro->requisicaoAtiva ? 'Indisponível' : 'Disponível' }}
+                            </span>
+                        </td>
+                        <td>
                             @if ($livro->editora)
                                 <a href="{{ route('editoras.show', $livro->editora) }}" class="text-cyan-200 hover:text-cyan-100 underline-offset-4 hover:underline">
                                     {{ $livro->editora->nome }}
@@ -122,18 +130,21 @@
                         <td>{{ number_format((float) $livro->preco, 2, ',', '.') }} EUR</td>
                         <td>
                             <div class="flex justify-end gap-2">
-                                <a class="btn btn-outline btn-sm" href="{{ route('livros.edit', $livro) }}">Editar</a>
-                                <form method="POST" action="{{ route('livros.destroy', $livro) }}" onsubmit="return confirm('Remover este livro?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="btn btn-error btn-sm" type="submit">Apagar</button>
-                                </form>
+                                <a class="btn btn-outline btn-sm {{ $livro->requisicaoAtiva ? 'btn-disabled' : '' }}" href="{{ route('requisicoes.index', ['livro_id' => $livro->id]) }}">Requisitar</a>
+                                @if (auth()->user()->isAdmin())
+                                    <a class="btn btn-outline btn-sm" href="{{ route('livros.edit', $livro) }}">Editar</a>
+                                    <form method="POST" action="{{ route('livros.destroy', $livro) }}" onsubmit="return confirm('Remover este livro?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-error btn-sm" type="submit">Apagar</button>
+                                    </form>
+                                @endif
                             </div>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="text-center">Sem registos.</td>
+                        <td colspan="8" class="text-center">Sem registos.</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -142,6 +153,3 @@
 
     <div class="mt-4">{{ $livros->links() }}</div>
 </x-app-layout>
-
-
-

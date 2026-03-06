@@ -19,6 +19,11 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class LivroController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('admin')->except(['index', 'show']);
+    }
+
     public function index(Request $request): View
     {
         $search = trim((string) $request->string('q'));
@@ -31,7 +36,7 @@ class LivroController extends Controller
         $precoMin = $request->get('preco_min');
         $precoMax = $request->get('preco_max');
 
-        $baseQuery = Livro::query()->with(['editora', 'autores']);
+        $baseQuery = Livro::query()->with(['editora', 'autores', 'requisicaoAtiva']);
 
         if ($editoraId) {
             $baseQuery->where('editora_id', $editoraId);
@@ -124,7 +129,11 @@ class LivroController extends Controller
 
     public function show(Livro $livro): View
     {
-        $livro->load(['editora', 'autores']);
+        $livro->load([
+            'editora',
+            'autores',
+            'requisicoes' => fn ($q) => $q->with('cidadao')->orderByDesc('created_at'),
+        ]);
 
         return view('livros.show', compact('livro'));
     }
