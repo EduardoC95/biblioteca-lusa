@@ -60,8 +60,6 @@ Route::middleware([
         ->middleware('admin')
         ->name('requisicoes.confirmar-entrega');
 
-    Route::resource('livros', LivroController::class)->only(['index', 'show']);
-
     Route::middleware('admin')->group(function () {
         Route::get('/livros/exportar/excel', [LivroController::class, 'export'])->name('livros.export');
         Route::resource('livros', LivroController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
@@ -70,6 +68,10 @@ Route::middleware([
         Route::get('/cidadaos/{cidadao}', [CidadaoController::class, 'show'])->name('cidadaos.show');
         Route::post('/admins', [AdminUserController::class, 'store'])->name('admins.store');
     });
+
+    Route::resource('livros', LivroController::class)
+        ->only(['index', 'show'])
+        ->where(['livro' => '[0-9]+']);
 
     Route::resource('autores', AutorController::class)
         ->parameters(['autores' => 'autor']);
