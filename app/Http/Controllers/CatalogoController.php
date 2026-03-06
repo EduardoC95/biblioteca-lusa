@@ -12,6 +12,10 @@ class CatalogoController extends Controller
 {
     public function index(Request $request): View
     {
+        if (! $request->user()) {
+            $request->session()->put('catalogo_visitante', true);
+        }
+
         $search = trim((string) $request->string('q'));
 
         $livros = Livro::query()
@@ -36,8 +40,12 @@ class CatalogoController extends Controller
         ]);
     }
 
-    public function show(Livro $livro): View
+    public function show(Request $request, Livro $livro): View
     {
+        if (! $request->user()) {
+            $request->session()->put('catalogo_visitante', true);
+        }
+
         $livro->load(['editora', 'autores', 'requisicaoAtiva.cidadao']);
 
         return view('catalogo.show', [

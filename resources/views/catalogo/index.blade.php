@@ -13,7 +13,11 @@
                 <div class="flex items-start justify-between gap-4">
                     <div class="min-w-0 flex-1">
                         <p class="text-xs uppercase tracking-widest text-slate-400">
-                            {{ $livro->requisicaoAtiva ? 'Indisponível' : 'Disponível' }}
+                            @if ($livro->requisicaoAtiva)
+                                Indispon&iacute;vel
+                            @else
+                                Dispon&iacute;vel
+                            @endif
                         </p>
                         <h2 class="mt-2 text-xl font-semibold text-cyan-100">
                             <a href="{{ route('catalogo.show', $livro) }}" class="hover:underline">{{ $livro->nome }}</a>
@@ -23,9 +27,15 @@
 
                         <div class="mt-4 flex gap-2">
                             <a href="{{ route('catalogo.show', $livro) }}" class="btn btn-outline btn-sm">Detalhe</a>
-                            <a href="{{ route('requisicoes.index', ['livro_id' => $livro->id]) }}" class="btn btn-primary btn-sm {{ $livro->requisicaoAtiva ? 'btn-disabled' : '' }}">
-                                Requisitar
-                            </a>
+                            @auth
+                                <a href="{{ route('requisicoes.index', ['livro_id' => $livro->id]) }}" class="btn btn-primary btn-sm {{ $livro->requisicaoAtiva ? 'btn-disabled' : '' }}">
+                                    Requisitar
+                                </a>
+                            @else
+                                <a href="{{ route('login') }}" class="btn btn-primary btn-sm">
+                                    Iniciar sess&atilde;o
+                                </a>
+                            @endauth
                         </div>
                     </div>
 

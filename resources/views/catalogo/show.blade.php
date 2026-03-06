@@ -16,12 +16,16 @@
 
         <div>
             <p class="text-xs uppercase tracking-widest text-slate-400">
-                {{ $livro->requisicaoAtiva ? 'Indisponível para requisição' : 'Disponível para requisição' }}
+                @if ($livro->requisicaoAtiva)
+                    Indispon&iacute;vel para requisi&ccedil;&atilde;o
+                @else
+                    Dispon&iacute;vel para requisi&ccedil;&atilde;o
+                @endif
             </p>
             <h1 class="mt-2 font-display text-4xl text-cyan-100">{{ $livro->nome }}</h1>
             <p class="mt-2 text-slate-200">ISBN {{ $livro->isbn }}</p>
             <p class="text-slate-200">Editora: {{ $livro->editora?->nome ?? '-' }}</p>
-            <p class="mt-3 whitespace-pre-line text-slate-300">{{ $livro->sinopse ?: 'Sem sinopse disponível.' }}</p>
+            <p class="mt-3 whitespace-pre-line text-slate-300">{{ $livro->sinopse ?: 'Sem sinopse dispon&iacute;vel.' }}</p>
 
             <div class="mt-4 flex flex-wrap gap-2">
                 @foreach ($livro->autores as $autor)
@@ -30,11 +34,12 @@
             </div>
 
             <div class="mt-6">
-                <a href="{{ route('requisicoes.index', ['livro_id' => $livro->id]) }}" class="btn btn-primary {{ $livro->requisicaoAtiva ? 'btn-disabled' : '' }}">Requisitar</a>
+                @auth
+                    <a href="{{ route('requisicoes.index', ['livro_id' => $livro->id]) }}" class="btn btn-primary {{ $livro->requisicaoAtiva ? 'btn-disabled' : '' }}">Requisitar</a>
+                @else
+                    <a href="{{ route('login') }}" class="btn btn-primary">Iniciar sess&atilde;o</a>
+                @endauth
             </div>
         </div>
     </div>
 </x-app-layout>
-
-
-
