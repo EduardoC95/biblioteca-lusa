@@ -19,10 +19,6 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class LivroController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('admin')->except(['index', 'show']);
-    }
 
     public function index(Request $request): View
     {
@@ -221,3 +217,4 @@ class LivroController extends Controller
         );
     }
 }
+
