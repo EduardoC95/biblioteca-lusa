@@ -15,7 +15,7 @@
 </span>
 
 @once
-<x-dialog-modal wire:model.live="confirmingPassword" maxWidth="xl">
+<x-dialog-modal wire:model.live="confirmingPassword" maxWidth="5xl">
     <x-slot name="title">
         {{ $title }}
     </x-slot>
