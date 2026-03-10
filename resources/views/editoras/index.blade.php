@@ -1,8 +1,15 @@
 <x-app-layout>
+    @php
+        $isAdmin = auth()->check() && auth()->user()->role === 'admin';
+    @endphp
+
     <x-slot name="header">
         <div class="flex flex-wrap items-center justify-between gap-3">
             <h2 class="font-display text-3xl text-cyan-200">Editoras</h2>
-            <a href="{{ route('editoras.create') }}" class="btn btn-primary">Nova Editora</a>
+
+            @if ($isAdmin)
+                <a href="{{ route('editoras.create') }}" class="btn btn-primary">Nova Editora</a>
+            @endif
         </div>
     </x-slot>
 
@@ -17,7 +24,7 @@
 
         <select name="sort" class="select select-bordered">
             <option value="nome" @selected($filters['sort'] === 'nome')>Ordenar por nome</option>
-            <option value="livros_count" @selected($filters['sort'] === 'livros_count')>Ordenar por n&uacute;mero de livros</option>
+            <option value="livros_count" @selected($filters['sort'] === 'livros_count')>Ordenar por número de livros</option>
             <option value="created_at" @selected($filters['sort'] === 'created_at')>Ordenar por data</option>
         </select>
 
@@ -40,15 +47,22 @@
                     <th>Logotipo</th>
                     <th>Livros</th>
                     <th>Notas</th>
-                    <th class="text-right">Ac&ccedil;&otilde;es</th>
+
+                    @if ($isAdmin)
+                        <th class="text-right">Ac&ccedil;&otilde;es</th>
+                    @endif
                 </tr>
             </thead>
+
             <tbody>
                 @forelse ($editoras as $editora)
                     <tr>
                         <td class="font-semibold">
-                            <a href="{{ route('editoras.show', $editora) }}" class="text-cyan-200 hover:text-cyan-100 underline-offset-4 hover:underline">{{ $editora->nome }}</a>
+                            <a href="{{ route('editoras.show', $editora) }}" class="text-cyan-200 hover:text-cyan-100 underline-offset-4 hover:underline">
+                                {{ $editora->nome }}
+                            </a>
                         </td>
+
                         <td>
                             @if ($editora->logotipo)
                                 <img src="{{ \Illuminate\Support\Facades\Storage::url($editora->logotipo) }}" class="h-16 rounded" alt="Logotipo" />
@@ -56,30 +70,57 @@
                                 -
                             @endif
                         </td>
-                        <td><span class="badge badge-outline border-cyan-300/40 text-cyan-200">{{ $editora->livros_count }}</span></td>
-                        <td>{{ \Illuminate\Support\Str::limit((string) $editora->notas, 120) }}</td>
+
                         <td>
-                            <div class="flex justify-end gap-2">
-                                <a class="btn btn-outline btn-sm" href="{{ route('editoras.edit', $editora) }}">Editar</a>
-                                <form method="POST" action="{{ route('editoras.destroy', $editora) }}" onsubmit="return confirm('Remover esta editora?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="btn btn-error btn-sm" type="submit">Apagar</button>
-                                </form>
-                            </div>
+                            <span class="badge badge-outline border-cyan-300/40 text-cyan-200">
+                                {{ $editora->livros_count }}
+                            </span>
                         </td>
+
+                        <td>
+                            {{ \Illuminate\Support\Str::limit((string) $editora->notas, 120) }}
+                        </td>
+
+                        @if ($isAdmin)
+                            <td>
+                                <div class="flex justify-end gap-2">
+
+                                    <a class="btn btn-outline btn-sm"
+                                       href="{{ route('editoras.edit', $editora) }}">
+                                        Editar
+                                    </a>
+
+                                    <form method="POST"
+                                          action="{{ route('editoras.destroy', $editora) }}"
+                                          onsubmit="return confirm('Remover esta editora?')">
+                                        @csrf
+                                        @method('DELETE')
+
+                                        <button class="btn btn-error btn-sm" type="submit">
+                                            Apagar
+                                        </button>
+                                    </form>
+
+                                </div>
+                            </td>
+                        @endif
+
                     </tr>
+
                 @empty
                     <tr>
-                        <td colspan="5" class="text-center">Sem registos.</td>
+                        <td colspan="{{ $isAdmin ? '5' : '4' }}" class="text-center">
+                            Sem registos.
+                        </td>
                     </tr>
                 @endforelse
             </tbody>
         </table>
     </div>
 
-    <div class="mt-4">{{ $editoras->links() }}</div>
+    <div class="mt-4">
+        {{ $editoras->links() }}
+    </div>
+
 </x-app-layout>
-
-
 

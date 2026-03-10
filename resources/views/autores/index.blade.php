@@ -1,8 +1,15 @@
 <x-app-layout>
+    @php
+        $isAdmin = auth()->check() && auth()->user()->role === 'admin';
+    @endphp
+
     <x-slot name="header">
         <div class="flex flex-wrap items-center justify-between gap-3">
             <h2 class="font-display text-3xl text-cyan-200">Autores</h2>
-            <a href="{{ route('autores.create') }}" class="btn btn-primary">Novo Autor</a>
+
+            @if ($isAdmin)
+                <a href="{{ route('autores.create') }}" class="btn btn-primary">Novo Autor</a>
+            @endif
         </div>
     </x-slot>
 
@@ -38,13 +45,19 @@
                     <th>Nome</th>
                     <th>Foto</th>
                     <th>Bibliografia</th>
-                    <th class="text-right">Ac&ccedil;&otilde;es</th>
+                    @if ($isAdmin)
+                        <th class="text-right">Ac&ccedil;&otilde;es</th>
+                    @endif
                 </tr>
             </thead>
             <tbody>
                 @forelse ($autores as $autor)
                     <tr>
-                        <td class="font-semibold"><a href="{{ route('autores.show', $autor) }}" class="text-cyan-200 hover:text-cyan-100 underline-offset-4 hover:underline">{{ $autor->nome }}</a></td>
+                        <td class="font-semibold">
+                            <a href="{{ route('autores.show', $autor) }}" class="text-cyan-200 hover:text-cyan-100 underline-offset-4 hover:underline">
+                                {{ $autor->nome }}
+                            </a>
+                        </td>
                         <td>
                             @if ($autor->foto)
                                 <img src="{{ \Illuminate\Support\Facades\Storage::url($autor->foto) }}" class="h-16 rounded" alt="Foto" />
@@ -53,20 +66,24 @@
                             @endif
                         </td>
                         <td>{{ \Illuminate\Support\Str::limit((string) $autor->bibliografia, 120) }}</td>
-                        <td>
-                            <div class="flex justify-end gap-2">
-                                <a class="btn btn-outline btn-sm" href="{{ route('autores.edit', $autor) }}">Editar</a>
-                                <form method="POST" action="{{ route('autores.destroy', $autor) }}" onsubmit="return confirm('Remover este autor?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="btn btn-error btn-sm" type="submit">Apagar</button>
-                                </form>
-                            </div>
-                        </td>
+
+                        @if ($isAdmin)
+                            <td>
+                                <div class="flex justify-end gap-2">
+                                    <a class="btn btn-outline btn-sm" href="{{ route('autores.edit', $autor) }}">Editar</a>
+
+                                    <form method="POST" action="{{ route('autores.destroy', $autor) }}" onsubmit="return confirm('Remover este autor?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-error btn-sm" type="submit">Apagar</button>
+                                    </form>
+                                </div>
+                            </td>
+                        @endif
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="text-center">Sem registos.</td>
+                        <td colspan="{{ $isAdmin ? '4' : '3' }}" class="text-center">Sem registos.</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -75,5 +92,3 @@
 
     <div class="mt-4">{{ $autores->links() }}</div>
 </x-app-layout>
-
-
