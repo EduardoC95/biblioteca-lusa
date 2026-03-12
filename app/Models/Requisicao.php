@@ -11,14 +11,23 @@ class Requisicao extends Model
 {
     protected $table = 'requisicoes';
 
+    public const ESTADO_PENDENTE_ENTREGA = 'pendente_entrega';
+    public const ESTADO_ATIVA = 'ativa';
+    public const ESTADO_DEVOLVIDA = 'devolvida';
+
     protected $fillable = [
         'numero_sequencial',
+        'estado',
         'livro_id',
         'cidadao_id',
         'cidadao_nome',
         'cidadao_email',
         'cidadao_foto_path',
         'data_requisicao',
+        'data_entrega_prevista',
+        'data_entrega_real',
+        'data_devolucao_prevista',
+        'data_devolucao_real',
         'data_prevista_entrega',
         'data_real_entrega',
         'dias_decorridos',
@@ -33,6 +42,10 @@ class Requisicao extends Model
             'cidadao_email' => 'encrypted',
             'cidadao_foto_path' => 'encrypted',
             'data_requisicao' => 'date',
+            'data_entrega_prevista' => 'date',
+            'data_entrega_real' => 'date',
+            'data_devolucao_prevista' => 'date',
+            'data_devolucao_real' => 'date',
             'data_prevista_entrega' => 'date',
             'data_real_entrega' => 'date',
             'dias_decorridos' => 'integer',
@@ -57,24 +70,63 @@ class Requisicao extends Model
 
     public function scopeAtivas(Builder $query): Builder
     {
-        return $query->whereNull('data_real_entrega');
+        return $query->whereIn('estado', [
+            self::ESTADO_PENDENTE_ENTREGA,
+            self::ESTADO_ATIVA,
+        ]);
+    }
+
+    public function scopePendentesEntrega(Builder $query): Builder
+    {
+        return $query->where('estado', self::ESTADO_PENDENTE_ENTREGA);
+    }
+
+    public function scopeEmPosseDoCidadao(Builder $query): Builder
+    {
+        return $query->where('estado', self::ESTADO_ATIVA);
+    }
+
+    public function scopeDevolvidas(Builder $query): Builder
+    {
+        return $query->where('estado', self::ESTADO_DEVOLVIDA);
     }
 
     public function scopeEntregues(Builder $query): Builder
     {
-        return $query->whereNotNull('data_real_entrega');
+        return $query->whereNotNull('data_entrega_real');
     }
 
     public function getEstaAtivaAttribute(): bool
     {
-        return $this->data_real_entrega === null;
+        return in_array($this->estado, [
+            self::ESTADO_PENDENTE_ENTREGA,
+            self::ESTADO_ATIVA,
+        ], true);
+    }
+
+    public function getEstaPendenteEntregaAttribute(): bool
+    {
+        return $this->estado === self::ESTADO_PENDENTE_ENTREGA;
+    }
+
+    public function getEstaEmPosseDoCidadaoAttribute(): bool
+    {
+        return $this->estado === self::ESTADO_ATIVA;
+    }
+
+    public function getEstaDevolvidaAttribute(): bool
+    {
+        return $this->estado === self::ESTADO_DEVOLVIDA;
     }
 
     public function getDiasEmAbertoAttribute(): int
     {
-        $inicio = CarbonImmutable::instance($this->data_requisicao);
-        $fim = $this->data_real_entrega
-            ? CarbonImmutable::instance($this->data_real_entrega)
+        $inicio = $this->data_entrega_real
+            ? CarbonImmutable::instance($this->data_entrega_real)
+            : CarbonImmutable::instance($this->data_requisicao);
+
+        $fim = $this->data_devolucao_real
+            ? CarbonImmutable::instance($this->data_devolucao_real)
             : CarbonImmutable::today();
 
         return max(0, $inicio->diffInDays($fim));

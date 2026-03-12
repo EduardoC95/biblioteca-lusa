@@ -59,6 +59,11 @@ Route::middleware([
     Route::patch('/requisicoes/{requisicao}/confirmar-entrega', [RequisicaoController::class, 'confirmarEntrega'])
         ->middleware('admin')
         ->name('requisicoes.confirmar-entrega');
+    Route::patch('/requisicoes/{requisicao}/confirmar-entrega', [RequisicaoController::class, 'confirmarEntrega'])
+    ->name('requisicoes.confirmar-entrega');
+
+    Route::patch('/requisicoes/{requisicao}/confirmar-devolucao', [RequisicaoController::class, 'confirmarDevolucao'])
+    ->name('requisicoes.confirmar-devolucao');
 
     Route::middleware('admin')->group(function () {
         Route::get('/livros/exportar/excel', [LivroController::class, 'export'])->name('livros.export');

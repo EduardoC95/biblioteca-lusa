@@ -33,17 +33,19 @@ class RequisicaoController extends Controller
         $indicadoresBase = Requisicao::query();
 
         $indicadores = [
-            'ativas' => (clone $indicadoresBase)->whereNull('data_real_entrega')->count(),
+            'ativas' => (clone $indicadoresBase)->ativas()->count(),
+
             'ultimos_30_dias' => (clone $indicadoresBase)
                 ->whereDate('data_requisicao', '>=', CarbonImmutable::today()->subDays(30))
                 ->count(),
+
             'entregues_hoje' => (clone $indicadoresBase)
-                ->whereDate('data_real_entrega', CarbonImmutable::today())
+                ->whereDate('data_devolucao_real', CarbonImmutable::today())
                 ->count(),
         ];
 
         $livrosDisponiveis = Livro::query()
-            ->whereDoesntHave('requisicoes', fn ($q) => $q->whereNull('data_real_entrega'))
+            ->whereDoesntHave('requisicoes', fn ($q) => $q->ativas())
             ->orderBy('id')
             ->get();
 
@@ -67,9 +69,10 @@ class RequisicaoController extends Controller
         $cidadao = User::query()->findOrFail($request->cidadaoId());
 
         $requisicao = DB::transaction(function () use ($livro, $cidadao): Requisicao {
+
             $livroAtivo = Requisicao::query()
                 ->where('livro_id', $livro->id)
-                ->whereNull('data_real_entrega')
+                ->ativas()
                 ->exists();
 
             if ($livroAtivo) {
@@ -80,7 +83,7 @@ class RequisicaoController extends Controller
 
             $requisicoesAtivasCidadao = Requisicao::query()
                 ->where('cidadao_id', $cidadao->id)
-                ->whereNull('data_real_entrega')
+                ->ativas()
                 ->count();
 
             if ($requisicoesAtivasCidadao >= 3) {
@@ -90,17 +93,22 @@ class RequisicaoController extends Controller
             }
 
             $numero = ((int) Requisicao::query()->max('numero_sequencial')) + 1;
+
             $hoje = CarbonImmutable::today();
 
             $requisicao = Requisicao::query()->create([
                 'numero_sequencial' => $numero,
+                'estado' => Requisicao::ESTADO_PENDENTE_ENTREGA,
+
                 'livro_id' => $livro->id,
                 'cidadao_id' => $cidadao->id,
+
                 'cidadao_nome' => $cidadao->name,
                 'cidadao_email' => $cidadao->email,
                 'cidadao_foto_path' => $cidadao->profile_photo_path,
+
                 'data_requisicao' => $hoje,
-                'data_prevista_entrega' => $hoje->addDays(5),
+                'data_entrega_prevista' => $hoje->addDays(5),
             ]);
 
             $livro->increment('total_requisicoes');
@@ -123,25 +131,43 @@ class RequisicaoController extends Controller
 
         return redirect()
             ->route('requisicoes.index')
-            ->with('status', 'Requisi&ccedil;&atilde;o criada com sucesso.');
+            ->with('status', 'Requisição criada com sucesso.');
     }
 
     public function confirmarEntrega(ConfirmarEntregaRequest $request, Requisicao $requisicao): RedirectResponse
     {
-        if ($requisicao->data_real_entrega) {
-            return back()->with('status', 'Esta requisi&ccedil;&atilde;o j&aacute; foi finalizada.');
+        if ($requisicao->estado !== Requisicao::ESTADO_PENDENTE_ENTREGA) {
+            return back()->with('status', 'Esta requisição já foi entregue.');
         }
 
         $dataEntrega = CarbonImmutable::parse($request->validated('data_real_entrega'));
-        $dataRequisicao = CarbonImmutable::instance($requisicao->data_requisicao);
 
         $requisicao->update([
-            'data_real_entrega' => $dataEntrega,
-            'dias_decorridos' => $dataRequisicao->diffInDays($dataEntrega),
+            'data_entrega_real' => $dataEntrega,
+            'data_devolucao_prevista' => $dataEntrega->addDays(5),
+            'estado' => Requisicao::ESTADO_ATIVA,
+        ]);
+
+        return back()->with('status', 'Entrega ao cidadão confirmada.');
+    }
+
+    public function confirmarDevolucao(Request $request, Requisicao $requisicao): RedirectResponse
+    {
+        if ($requisicao->estado !== Requisicao::ESTADO_ATIVA) {
+            return back()->with('status', 'Esta requisição já foi devolvida.');
+        }
+
+        $dataDevolucao = CarbonImmutable::parse($request->input('data_devolucao_real'));
+
+        $dataEntrega = CarbonImmutable::instance($requisicao->data_entrega_real);
+
+        $requisicao->update([
+            'data_devolucao_real' => $dataDevolucao,
+            'dias_decorridos' => $dataEntrega->diffInDays($dataDevolucao),
+            'estado' => Requisicao::ESTADO_DEVOLVIDA,
             'devolucao_confirmada_por_admin_id' => $request->user()->id,
         ]);
 
-        return back()->with('status', 'Entrega confirmada com sucesso.');
+        return back()->with('status', 'Devolução confirmada com sucesso.');
     }
 }
-
