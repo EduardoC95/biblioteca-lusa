@@ -268,6 +268,6 @@
 <div class="mt-4">
     {{ $requisicoes->links() }}
 </div>
-```
+
 
 </x-app-layout>

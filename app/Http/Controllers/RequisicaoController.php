@@ -108,7 +108,7 @@ class RequisicaoController extends Controller
                 'cidadao_foto_path' => $cidadao->profile_photo_path,
 
                 'data_requisicao' => $hoje,
-                'data_entrega_prevista' => $hoje->addDays(5),
+                'data_prevista_entrega' => $hoje->addDays(5),
             ]);
 
             $livro->increment('total_requisicoes');
