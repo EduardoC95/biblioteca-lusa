@@ -5,15 +5,15 @@
 
     <div class="grid gap-3 md:grid-cols-3">
         <div class="rounded-xl border border-cyan-300/20 bg-slate-900/70 p-4">
-            <p class="text-xs uppercase tracking-widest text-cyan-300"># Requisições Ativas</p>
+            <p class="text-xs uppercase tracking-widest text-cyan-300">Requisições Ativas</p>
             <p class="mt-2 text-3xl font-semibold">{{ $indicadores['ativas'] }}</p>
         </div>
         <div class="rounded-xl border border-cyan-300/20 bg-slate-900/70 p-4">
-            <p class="text-xs uppercase tracking-widest text-cyan-300"># Requisições últimos 30 dias</p>
+            <p class="text-xs uppercase tracking-widest text-cyan-300">Requisições últimos 30 dias</p>
             <p class="mt-2 text-3xl font-semibold">{{ $indicadores['ultimos_30_dias'] }}</p>
         </div>
         <div class="rounded-xl border border-cyan-300/20 bg-slate-900/70 p-4">
-            <p class="text-xs uppercase tracking-widest text-cyan-300"># Livros entregues hoje</p>
+            <p class="text-xs uppercase tracking-widest text-cyan-300">Livros entregues hoje</p>
             <p class="mt-2 text-3xl font-semibold">{{ $indicadores['entregues_hoje'] }}</p>
         </div>
     </div>
