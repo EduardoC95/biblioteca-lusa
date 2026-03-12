@@ -14,7 +14,6 @@
 
         @if (count($this->sessions) > 0)
             <div class="mt-5 space-y-6">
-                <!-- Other Browser Sessions -->
                 @foreach ($this->sessions as $session)
                     <div class="flex items-center">
                         <div>
@@ -52,7 +51,7 @@
         @endif
 
         <div class="flex items-center mt-5">
-            <x-button wire:click="confirmLogout" wire:loading.attr="disabled">
+            <x-button wire:click="$set('confirmingLogout', true)" wire:loading.attr="disabled" type="button">
                 {{ __('Log Out Other Browser Sessions') }}
             </x-button>
 
@@ -61,40 +60,49 @@
             </x-action-message>
         </div>
 
-        <!-- Log Out Other Devices Confirmation Modal -->
-        <x-dialog-modal wire:model.live="confirmingLogout">
-            <x-slot name="title">
-                {{ __('Log Out Other Browser Sessions') }}
-            </x-slot>
+        @if ($confirmingLogout)
+            <div class="mt-6 rounded-2xl border border-[color:var(--wood-border)] bg-[color:var(--wood-panel)] p-6 shadow-lg">
+                <h3 class="text-xl font-semibold text-[color:var(--wood-heading)]">
+                    {{ __('Log Out Other Browser Sessions') }}
+                </h3>
 
-            <x-slot name="content">
-                {{ __('Please enter your password to confirm you would like to log out of your other browser sessions across all of your devices.') }}
+                <div class="mt-3 text-sm text-[color:var(--wood-text)]">
+                    {{ __('Please enter your password to confirm you would like to log out of your other browser sessions across all of your devices.') }}
+                </div>
 
-                <div class="mt-4" x-data="{}" x-on:confirming-logout-other-browser-sessions.window="setTimeout(() => $refs.password.focus(), 250)">
-                    <x-input type="password" class="mt-1 block w-3/4"
-                                autocomplete="current-password"
-                                placeholder="{{ __('Password') }}"
-                                x-ref="password"
-                                wire:model="password"
-                                wire:keydown.enter="logoutOtherBrowserSessions" />
+                <div
+                    class="mt-4"
+                    x-data="{}"
+                    x-init="$nextTick(() => $refs.password.focus())"
+                >
+                    <x-input
+                        type="password"
+                        class="mt-1 block w-full md:w-3/4"
+                        autocomplete="current-password"
+                        placeholder="{{ __('Password') }}"
+                        x-ref="password"
+                        wire:model="password"
+                        wire:keydown.enter="logoutOtherBrowserSessions"
+                    />
 
                     <x-input-error for="password" class="mt-2" />
                 </div>
-            </x-slot>
 
-            <x-slot name="footer">
-                <x-secondary-button wire:click="$toggle('confirmingLogout')" wire:loading.attr="disabled">
-                    {{ __('Cancel') }}
-                </x-secondary-button>
+                <div class="mt-6 flex flex-wrap justify-end gap-3">
+                    <x-secondary-button wire:click="$set('confirmingLogout', false)" wire:loading.attr="disabled" type="button">
+                        {{ __('Cancel') }}
+                    </x-secondary-button>
 
-                <x-button class="ms-3"
-                            wire:click="logoutOtherBrowserSessions"
-                            wire:loading.attr="disabled">
-                    {{ __('Log Out Other Browser Sessions') }}
-                </x-button>
-            </x-slot>
-        </x-dialog-modal>
+                    <x-button
+                        wire:click="logoutOtherBrowserSessions"
+                        wire:loading.attr="disabled"
+                        type="button"
+                    >
+                        {{ __('Log Out Other Browser Sessions') }}
+                    </x-button>
+                </div>
+            </div>
+        @endif
     </x-slot>
 </x-action-section>
-
 
