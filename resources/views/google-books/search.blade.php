@@ -26,9 +26,27 @@
                 </form>
             </div>
 
+            @if (session('success'))
+                <div class="rounded-lg bg-green-100 text-green-800 px-4 py-3">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if (session('info'))
+                <div class="rounded-lg bg-blue-100 text-blue-800 px-4 py-3">
+                    {{ session('info') }}
+                </div>
+            @endif
+
             @if ($error)
                 <div class="rounded-lg bg-red-100 text-red-800 px-4 py-3">
                     {{ $error }}
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div class="rounded-lg bg-red-100 text-red-800 px-4 py-3">
+                    {{ session('error') }}
                 </div>
             @endif
 
@@ -46,16 +64,16 @@
                         <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                             @foreach ($items as $item)
                                 <div class="border rounded-xl p-4 dark:border-gray-700">
-                                    @if (!empty($item['capa_url']))
+                                    @if (!empty($item['capa_imagem']))
                                         <img
-                                            src="{{ $item['capa_url'] }}"
-                                            alt="{{ $item['titulo'] ?? 'Capa do livro' }}"
+                                            src="{{ $item['capa_imagem'] }}"
+                                            alt="{{ $item['nome'] ?? 'Capa do livro' }}"
                                             class="w-28 h-40 object-cover rounded mb-3"
                                         >
                                     @endif
 
                                     <h3 class="font-semibold text-lg dark:text-white">
-                                        {{ $item['titulo'] ?? 'Sem título' }}
+                                        {{ $item['nome'] ?? 'Sem título' }}
                                     </h3>
 
                                     @if (!empty($item['autores']))
@@ -76,20 +94,32 @@
                                         </p>
                                     @endif
 
-                                    @if (!empty($item['descricao']))
+                                    @if (!empty($item['sinopse']))
                                         <p class="text-sm text-gray-600 dark:text-gray-300 mt-3">
-                                            {{ \Illuminate\Support\Str::limit(strip_tags($item['descricao']), 180) }}
+                                            {{ \Illuminate\Support\Str::limit(strip_tags($item['sinopse']), 180) }}
                                         </p>
                                     @endif
 
                                     <div class="mt-4">
-                                        <button
-                                            type="button"
-                                            class="px-3 py-2 text-sm rounded bg-green-600 text-white opacity-60 cursor-not-allowed"
-                                            disabled
-                                        >
-                                            Importar
-                                        </button>
+                                        @if (!empty($item['volume_id']))
+                                            <form method="POST" action="{{ route('google-books.import', $item['volume_id']) }}">
+                                                @csrf
+                                                <button
+                                                    type="submit"
+                                                    class="px-3 py-2 text-sm rounded bg-green-600 text-white hover:bg-green-700"
+                                                >
+                                                    Importar
+                                                </button>
+                                            </form>
+                                        @else
+                                            <button
+                                                type="button"
+                                                class="px-3 py-2 text-sm rounded bg-green-600 text-white opacity-60 cursor-not-allowed"
+                                                disabled
+                                            >
+                                                Importar
+                                            </button>
+                                        @endif
                                     </div>
                                 </div>
                             @endforeach

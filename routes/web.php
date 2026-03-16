@@ -8,6 +8,7 @@ use App\Http\Controllers\EditoraController;
 use App\Http\Controllers\LivroController;
 use App\Http\Controllers\RequisicaoController;
 use App\Http\Controllers\GoogleBooksController;
+use App\Http\Controllers\GoogleBooksImportController;
 use App\Models\Autor;
 use App\Models\Editora;
 use App\Models\Livro;
@@ -85,4 +86,7 @@ Route::middleware([
 
     Route::get('/google-books/pesquisar', [GoogleBooksController::class, 'search'])
     ->name('google-books.search');
+
+    Route::post('/google-books/importar/{volumeId}', [GoogleBooksImportController::class, 'store'])
+    ->name('google-books.import');
 });

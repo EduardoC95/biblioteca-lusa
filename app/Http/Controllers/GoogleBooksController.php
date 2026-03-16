@@ -17,7 +17,7 @@ class GoogleBooksController extends Controller
         if ($query !== '') {
             try {
                 $items = collect($googleBooks->search($query, 12))
-                    ->map(fn(array $volume) => $googleBooks->mapBook($volume))
+                    ->map(fn (array $volume) => $googleBooks->mapBook($volume))
                     ->all();
             } catch (\Throwable $e) {
                 $error = 'Não foi possível pesquisar livros na Google Books API.';
