@@ -8,6 +8,9 @@ use App\Models\Livro;
 use App\Services\GoogleBooksService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class GoogleBooksImportController extends Controller
 {
@@ -15,7 +18,7 @@ class GoogleBooksImportController extends Controller
     {
         $volume = $googleBooks->getVolume($volumeId);
 
-        if (!$volume) {
+        if (! $volume) {
             return back()->with('error', 'Não foi possível obter os dados do livro na Google Books.');
         }
 
@@ -28,7 +31,7 @@ class GoogleBooksImportController extends Controller
 
         $existingBook = null;
 
-        if (!empty($mappedBook['isbn'])) {
+        if (! empty($mappedBook['isbn'])) {
             $existingBook = Livro::query()
                 ->get()
                 ->first(function (Livro $livro) use ($mappedBook) {
@@ -36,11 +39,11 @@ class GoogleBooksImportController extends Controller
                 });
         }
 
-        if (!$existingBook && !empty($mappedBook['nome'])) {
+        if (! $existingBook && ! empty($mappedBook['nome'])) {
             $existingBook = Livro::query()
                 ->get()
                 ->first(function (Livro $livro) use ($mappedBook) {
-                    return mb_strtolower($livro->nome) === mb_strtolower($mappedBook['nome']);
+                    return mb_strtolower((string) $livro->nome) === mb_strtolower((string) $mappedBook['nome']);
                 });
         }
 
@@ -61,14 +64,32 @@ class GoogleBooksImportController extends Controller
                 $editoraId = $editora->id;
             }
 
+            $capaPath = null;
+
+            if (! empty($mappedBook['capa_imagem'])) {
+                try {
+                    $imageResponse = Http::timeout(15)->get($mappedBook['capa_imagem']);
+
+                    if ($imageResponse->successful()) {
+                        $filename = 'livros/' . Str::uuid() . '.jpg';
+
+                        Storage::disk('public')->put($filename, $imageResponse->body());
+
+                        $capaPath = $filename;
+                    }
+                } catch (\Throwable $e) {
+                    $capaPath = null;
+                }
+            }
+
             $livro = Livro::create([
                 'isbn' => $mappedBook['isbn'],
                 'nome' => $mappedBook['nome'],
                 'editora_id' => $editoraId,
                 'sinopse' => $mappedBook['sinopse'],
-                'capa_imagem' => $mappedBook['capa_imagem'],
+                'capa_imagem' => $capaPath,
                 'preco' => number_format((float) ($mappedBook['preco'] ?? 0), 2, '.', ''),
-                'total_requisicoes' => $mappedBook['total_requisicoes'],
+                'total_requisicoes' => $mappedBook['total_requisicoes'] ?? 0,
             ]);
 
             $authorIds = [];
@@ -87,7 +108,7 @@ class GoogleBooksImportController extends Controller
                 $authorIds[] = $autor->id;
             }
 
-            if (!empty($authorIds)) {
+            if (! empty($authorIds)) {
                 $livro->autores()->syncWithoutDetaching($authorIds);
             }
         });
