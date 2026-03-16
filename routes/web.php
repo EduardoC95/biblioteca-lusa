@@ -5,10 +5,11 @@ use App\Http\Controllers\AutorController;
 use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\CidadaoController;
 use App\Http\Controllers\EditoraController;
-use App\Http\Controllers\LivroController;
-use App\Http\Controllers\RequisicaoController;
 use App\Http\Controllers\GoogleBooksController;
 use App\Http\Controllers\GoogleBooksImportController;
+use App\Http\Controllers\LivroController;
+use App\Http\Controllers\PesquisaLivrosController;
+use App\Http\Controllers\RequisicaoController;
 use App\Models\Autor;
 use App\Models\Editora;
 use App\Models\Livro;
@@ -36,7 +37,6 @@ Route::middleware([
             ->orderByDesc('livros_count')
             ->get();
 
-        // Preco esta cifrado; o calculo do medio precisa de desserializar no PHP.
         $precoMedio = Livro::query()->get(['id', 'preco'])
             ->avg(fn (Livro $livro): float => (float) $livro->preco);
 
@@ -58,14 +58,13 @@ Route::middleware([
 
     Route::get('/requisicoes', [RequisicaoController::class, 'index'])->name('requisicoes.index');
     Route::post('/requisicoes', [RequisicaoController::class, 'store'])->name('requisicoes.store');
+
     Route::patch('/requisicoes/{requisicao}/confirmar-entrega', [RequisicaoController::class, 'confirmarEntrega'])
         ->middleware('admin')
         ->name('requisicoes.confirmar-entrega');
-    Route::patch('/requisicoes/{requisicao}/confirmar-entrega', [RequisicaoController::class, 'confirmarEntrega'])
-    ->name('requisicoes.confirmar-entrega');
 
     Route::patch('/requisicoes/{requisicao}/confirmar-devolucao', [RequisicaoController::class, 'confirmarDevolucao'])
-    ->name('requisicoes.confirmar-devolucao');
+        ->name('requisicoes.confirmar-devolucao');
 
     Route::middleware('admin')->group(function () {
         Route::get('/livros/exportar/excel', [LivroController::class, 'export'])->name('livros.export');
@@ -82,11 +81,15 @@ Route::middleware([
 
     Route::resource('autores', AutorController::class)
         ->parameters(['autores' => 'autor']);
+
     Route::resource('editoras', EditoraController::class);
 
     Route::get('/google-books/pesquisar', [GoogleBooksController::class, 'search'])
-    ->name('google-books.search');
+        ->name('google-books.search');
 
     Route::post('/google-books/importar/{volumeId}', [GoogleBooksImportController::class, 'store'])
-    ->name('google-books.import');
+        ->name('google-books.import');
+
+    Route::get('/livros/pesquisa-unificada', [PesquisaLivrosController::class, 'index'])
+        ->name('livros.pesquisa-unificada');
 });
