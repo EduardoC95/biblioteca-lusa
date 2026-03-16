@@ -26,6 +26,18 @@
                 </form>
             </div>
 
+            @if (session('success'))
+                <div class="rounded-lg bg-green-100 text-green-800 px-4 py-3">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if (session('info'))
+                <div class="rounded-lg bg-blue-100 text-blue-800 px-4 py-3">
+                    {{ session('info') }}
+                </div>
+            @endif
+
             @if ($error)
                 <div class="rounded-lg bg-red-100 text-red-800 px-4 py-3">
                     {{ $error }}
@@ -105,6 +117,12 @@
                                     @if (!empty($item['editora']))
                                         <p class="text-sm text-gray-600 dark:text-gray-300">
                                             <strong>Editora:</strong> {{ $item['editora'] }}
+                                        </p>
+                                    @endif
+
+                                    @if (!empty($item['sinopse']))
+                                        <p class="text-sm text-gray-600 dark:text-gray-300 mt-3">
+                                            {{ \Illuminate\Support\Str::limit(strip_tags($item['sinopse']), 180) }}
                                         </p>
                                     @endif
 

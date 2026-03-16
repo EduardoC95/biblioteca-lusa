@@ -11,6 +11,7 @@ class PesquisaLivrosController extends Controller
     public function index(Request $request, GoogleBooksService $googleBooks)
     {
         $query = trim((string) $request->get('q', ''));
+        $queryNormalizada = mb_strtolower($query);
 
         $livrosLocais = collect();
         $livrosGoogle = collect();
@@ -20,14 +21,14 @@ class PesquisaLivrosController extends Controller
             $livrosLocais = Livro::query()
                 ->with(['editora', 'autores'])
                 ->get()
-                ->filter(function (Livro $livro) use ($query) {
+                ->filter(function (Livro $livro) use ($queryNormalizada) {
                     $nome = mb_strtolower((string) $livro->nome);
                     $isbn = mb_strtolower((string) $livro->isbn);
                     $sinopse = mb_strtolower((string) $livro->sinopse);
 
-                    return str_contains($nome, mb_strtolower($query))
-                        || str_contains($isbn, mb_strtolower($query))
-                        || str_contains($sinopse, mb_strtolower($query));
+                    return str_contains($nome, $queryNormalizada)
+                        || str_contains($isbn, $queryNormalizada)
+                        || str_contains($sinopse, $queryNormalizada);
                 })
                 ->values();
 
@@ -36,9 +37,9 @@ class PesquisaLivrosController extends Controller
                     ->map(fn (array $volume) => $googleBooks->mapBook($volume))
                     ->filter(function (array $item) use ($livrosLocais) {
                         return ! $livrosLocais->contains(function (Livro $livro) use ($item) {
-                            $mesmoIsbn = !empty($item['isbn']) && $livro->isbn === $item['isbn'];
-                            $mesmoNome = !empty($item['nome']) &&
-                                mb_strtolower((string) $livro->nome) === mb_strtolower((string) $item['nome']);
+                            $mesmoIsbn = ! empty($item['isbn']) && $livro->isbn === $item['isbn'];
+                            $mesmoNome = ! empty($item['nome'])
+                                && mb_strtolower((string) $livro->nome) === mb_strtolower((string) $item['nome']);
 
                             return $mesmoIsbn || $mesmoNome;
                         });
