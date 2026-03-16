@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateLivroRequest;
 use App\Models\Autor;
 use App\Models\Editora;
 use App\Models\Livro;
+use App\Services\GoogleBooksService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -19,13 +20,15 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class LivroController extends Controller
 {
-
-    public function index(Request $request): View
+    public function index(Request $request, GoogleBooksService $googleBooksService): View
     {
         $search = trim((string) $request->string('q'));
+        $searchNormalizado = mb_strtolower($search);
+
         $sort = in_array($request->get('sort'), ['nome', 'isbn', 'preco', 'editora', 'autores', 'created_at'], true)
             ? $request->get('sort')
             : 'nome';
+
         $direction = $request->get('direction') === 'desc' ? 'desc' : 'asc';
         $editoraId = $request->integer('editora_id') ?: null;
         $autorId = $request->integer('autor_id') ?: null;
@@ -53,7 +56,7 @@ class LivroController extends Controller
                 ->paginate(10)
                 ->withQueryString();
         } else {
-            $livros = $baseQuery->get()->filter(function (Livro $livro) use ($search, $precoMin, $precoMax): bool {
+            $livros = $baseQuery->get()->filter(function (Livro $livro) use ($search, $searchNormalizado, $precoMin, $precoMax): bool {
                 $preco = (float) $livro->preco;
 
                 if ($precoMin !== null && $precoMin !== '' && $preco < (float) $precoMin) {
@@ -71,15 +74,39 @@ class LivroController extends Controller
                 $authorNames = $livro->autores->pluck('nome')->implode(' ');
                 $editoraName = $livro->editora?->nome ?? '';
 
-                return str_contains(mb_strtolower($livro->isbn), mb_strtolower($search))
-                    || str_contains(mb_strtolower($livro->nome), mb_strtolower($search))
-                    || str_contains(mb_strtolower((string) $livro->sinopse), mb_strtolower($search))
-                    || str_contains(mb_strtolower($authorNames), mb_strtolower($search))
-                    || str_contains(mb_strtolower($editoraName), mb_strtolower($search));
+                return str_contains(mb_strtolower((string) $livro->isbn), $searchNormalizado)
+                    || str_contains(mb_strtolower((string) $livro->nome), $searchNormalizado)
+                    || str_contains(mb_strtolower((string) $livro->sinopse), $searchNormalizado)
+                    || str_contains(mb_strtolower((string) $authorNames), $searchNormalizado)
+                    || str_contains(mb_strtolower((string) $editoraName), $searchNormalizado);
             });
 
             $livros = $this->sort($livros, $sort, $direction);
             $livrosPaginator = $this->paginateCollection($livros, 10);
+        }
+
+        $googleBooks = collect();
+        $googleBooksError = null;
+
+        if ($search !== '') {
+            try {
+                $livrosLocais = $livrosPaginator->getCollection();
+
+                $googleBooks = collect($googleBooksService->search($search, 8))
+                    ->map(fn (array $volume) => $googleBooksService->mapBook($volume))
+                    ->filter(function (array $item) use ($livrosLocais) {
+                        return ! $livrosLocais->contains(function (Livro $livro) use ($item) {
+                            $mesmoIsbn = ! empty($item['isbn']) && (string) $livro->isbn === (string) $item['isbn'];
+                            $mesmoNome = ! empty($item['nome'])
+                                && mb_strtolower((string) $livro->nome) === mb_strtolower((string) $item['nome']);
+
+                            return $mesmoIsbn || $mesmoNome;
+                        });
+                    })
+                    ->values();
+            } catch (\Throwable $e) {
+                $googleBooksError = 'Não foi possível obter resultados externos da Google Books API.';
+            }
         }
 
         return view('livros.index', [
@@ -95,6 +122,8 @@ class LivroController extends Controller
                 'preco_min' => $precoMin,
                 'preco_max' => $precoMax,
             ],
+            'googleBooks' => $googleBooks,
+            'googleBooksError' => $googleBooksError,
         ]);
     }
 
@@ -217,4 +246,3 @@ class LivroController extends Controller
         );
     }
 }
-

@@ -152,5 +152,110 @@
     </div>
 
     <div class="mt-4">{{ $livros->links() }}</div>
+
+    @if (!empty($filters['q']))
+    <div class="mt-8 rounded-xl border border-cyan-300/20 bg-slate-900/70 p-6">
+        <div class="mb-4 flex items-center justify-between gap-3">
+            <div>
+                <h3 class="font-display text-2xl text-cyan-200">Resultados Google Books</h3>
+                <p class="mt-1 text-sm text-slate-300">
+                    Estes resultados são externos e ainda não existem na tua base de dados local.
+                </p>
+            </div>
+        </div>
+
+        @if (!empty($googleBooksError))
+            <div class="mb-4 rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-red-200">
+                {{ $googleBooksError }}
+            </div>
+        @endif
+
+        @if ($googleBooks->isEmpty())
+            <div class="rounded-lg border border-slate-700 bg-slate-950/40 px-4 py-6 text-center text-slate-400">
+                Não foram encontrados novos livros externos para este termo.
+            </div>
+        @else
+            <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                @foreach ($googleBooks as $item)
+                    <div class="rounded-xl border border-cyan-300/20 bg-slate-950/40 p-4">
+                        <div class="flex gap-4">
+                            <div class="shrink-0">
+                                @if (!empty($item['capa_imagem']))
+                                    <img
+                                        src="{{ $item['capa_imagem'] }}"
+                                        alt="{{ $item['nome'] ?? 'Capa do livro' }}"
+                                        class="h-32 w-24 rounded object-cover shadow-sm"
+                                    />
+                                @else
+                                    <div class="flex h-32 w-24 items-center justify-center rounded border border-dashed border-slate-500/50 text-xs text-slate-500">
+                                        sem capa
+                                    </div>
+                                @endif
+                            </div>
+
+                            <div class="min-w-0 flex-1">
+                                <h4 class="text-lg font-semibold text-cyan-200">
+                                    {{ $item['nome'] ?? 'Sem título' }}
+                                </h4>
+
+                                @if (!empty($item['autores']))
+                                    <p class="mt-1 text-sm text-slate-300">
+                                        <strong class="text-slate-200">Autores:</strong> {{ $item['autores'] }}
+                                    </p>
+                                @endif
+
+                                @if (!empty($item['editora']))
+                                    <p class="text-sm text-slate-300">
+                                        <strong class="text-slate-200">Editora:</strong> {{ $item['editora'] }}
+                                    </p>
+                                @endif
+
+                                @if (!empty($item['data_publicacao']))
+                                    <p class="text-sm text-slate-300">
+                                        <strong class="text-slate-200">Publicação:</strong> {{ $item['data_publicacao'] }}
+                                    </p>
+                                @endif
+
+                                @if (!empty($item['isbn']))
+                                    <p class="text-sm text-slate-300">
+                                        <strong class="text-slate-200">ISBN:</strong> {{ $item['isbn'] }}
+                                    </p>
+                                @endif
+                            </div>
+                        </div>
+
+                        @if (!empty($item['sinopse']))
+                            <p class="mt-4 text-sm leading-6 text-slate-300">
+                                {{ \Illuminate\Support\Str::limit(strip_tags($item['sinopse']), 220) }}
+                            </p>
+                        @endif
+
+                        <div class="mt-4 flex justify-end">
+                            @if (!empty($item['volume_id']))
+                                <form method="POST" action="{{ route('google-books.import', $item['volume_id']) }}">
+                                    @csrf
+                                    <button
+                                        type="submit"
+                                        class="btn btn-primary btn-sm"
+                                    >
+                                        Importar
+                                    </button>
+                                </form>
+                            @else
+                                <button
+                                    type="button"
+                                    class="btn btn-outline btn-sm btn-disabled"
+                                    disabled
+                                >
+                                    Importar
+                                </button>
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+    </div>
+@endif
 </x-app-layout>
 
