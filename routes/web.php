@@ -7,6 +7,7 @@ use App\Http\Controllers\CidadaoController;
 use App\Http\Controllers\EditoraController;
 use App\Http\Controllers\LivroController;
 use App\Http\Controllers\RequisicaoController;
+use App\Http\Controllers\GoogleBooksController;
 use App\Models\Autor;
 use App\Models\Editora;
 use App\Models\Livro;
@@ -81,4 +82,7 @@ Route::middleware([
     Route::resource('autores', AutorController::class)
         ->parameters(['autores' => 'autor']);
     Route::resource('editoras', EditoraController::class);
+
+    Route::get('/google-books/pesquisar', [GoogleBooksController::class, 'search'])
+    ->name('google-books.search');
 });
