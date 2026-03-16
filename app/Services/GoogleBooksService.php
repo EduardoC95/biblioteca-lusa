@@ -77,7 +77,7 @@ class GoogleBooksService
             'data_publicacao' => $dataPublicacao,
             'sinopse' => $info['description'] ?? null,
             'capa_imagem' => $info['imageLinks']['thumbnail'] ?? null,
-            'preco' => null,
+            'preco' => '0.00',
             'total_requisicoes' => 0,
         ];
     }

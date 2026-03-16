@@ -67,7 +67,7 @@ class GoogleBooksImportController extends Controller
                 'editora_id' => $editoraId,
                 'sinopse' => $mappedBook['sinopse'],
                 'capa_imagem' => $mappedBook['capa_imagem'],
-                'preco' => $mappedBook['preco'],
+                'preco' => number_format((float) ($mappedBook['preco'] ?? 0), 2, '.', ''),
                 'total_requisicoes' => $mappedBook['total_requisicoes'],
             ]);
 
