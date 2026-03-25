@@ -10,6 +10,8 @@ use App\Http\Controllers\GoogleBooksImportController;
 use App\Http\Controllers\LivroController;
 use App\Http\Controllers\PesquisaLivrosController;
 use App\Http\Controllers\RequisicaoController;
+use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\Admin\AdminReviewController;
 use App\Models\Autor;
 use App\Models\Editora;
 use App\Models\Livro;
@@ -92,4 +94,15 @@ Route::middleware([
 
     Route::get('/livros/pesquisa-unificada', [PesquisaLivrosController::class, 'index'])
         ->name('livros.pesquisa-unificada');
+
+    Route::middleware(['auth'])->group(function () {
+    Route::post('/requisicoes/{requisicao}/review', [ReviewController::class, 'store'])
+        ->name('reviews.store');
+    });
+
+    Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/reviews', [AdminReviewController::class, 'index'])->name('reviews.index');
+    Route::get('/reviews/{review}', [AdminReviewController::class, 'show'])->name('reviews.show');
+    Route::patch('/reviews/{review}', [AdminReviewController::class, 'update'])->name('reviews.update');
+});
 });

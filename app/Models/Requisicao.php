@@ -131,4 +131,9 @@ class Requisicao extends Model
 
         return max(0, $inicio->diffInDays($fim));
     }
+
+    public function review()
+    {
+    return $this->hasOne(\App\Models\Review::class);
+    }
 }

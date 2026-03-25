@@ -85,4 +85,9 @@ class User extends Authenticatable
     {
         return $this->role === self::ROLE_CIDADAO;
     }
+
+    public function reviews()
+    {
+    return $this->hasMany(\App\Models\Review::class);
+    }
 }
