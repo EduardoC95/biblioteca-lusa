@@ -60,6 +60,7 @@ Route::middleware([
 
     Route::get('/requisicoes', [RequisicaoController::class, 'index'])->name('requisicoes.index');
     Route::post('/requisicoes', [RequisicaoController::class, 'store'])->name('requisicoes.store');
+    Route::get('/requisicoes/{requisicao}', [RequisicaoController::class, 'show'])->name('requisicoes.show');
 
     Route::patch('/requisicoes/{requisicao}/confirmar-entrega', [RequisicaoController::class, 'confirmarEntrega'])
         ->middleware('admin')
@@ -95,14 +96,12 @@ Route::middleware([
     Route::get('/livros/pesquisa-unificada', [PesquisaLivrosController::class, 'index'])
         ->name('livros.pesquisa-unificada');
 
-    Route::middleware(['auth'])->group(function () {
     Route::post('/requisicoes/{requisicao}/review', [ReviewController::class, 'store'])
         ->name('reviews.store');
-    });
 
-    Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/reviews', [AdminReviewController::class, 'index'])->name('reviews.index');
-    Route::get('/reviews/{review}', [AdminReviewController::class, 'show'])->name('reviews.show');
-    Route::patch('/reviews/{review}', [AdminReviewController::class, 'update'])->name('reviews.update');
-});
+    Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/reviews', [AdminReviewController::class, 'index'])->name('reviews.index');
+        Route::get('/reviews/{review}', [AdminReviewController::class, 'show'])->name('reviews.show');
+        Route::patch('/reviews/{review}', [AdminReviewController::class, 'update'])->name('reviews.update');
+    });
 });

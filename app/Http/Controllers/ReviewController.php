@@ -16,15 +16,9 @@ class ReviewController extends Controller
     {
         $user = $request->user();
 
-        abort_unless($user->role === 'cidadao', 403);
+        abort_unless($user->role === User::ROLE_CIDADAO, 403);
         abort_unless((int) $requisicao->cidadao_id === (int) $user->id, 403);
-
-        // Ajusta estes campos à tua estrutura real:
-        abort_unless(
-            in_array($requisicao->estado, ['entregue', 'devolvida', 'finalizada']),
-            403,
-            'Só pode deixar review após a entrega do livro.'
-        );
+        abort_unless($requisicao->estado === Requisicao::ESTADO_DEVOLVIDA, 403, 'Só pode deixar review após a devolução do livro.');
 
         if ($requisicao->review()->exists()) {
             return back()->with('error', 'Esta requisição já tem um review associado.');
@@ -44,7 +38,11 @@ class ReviewController extends Controller
             'estado' => 'suspenso',
         ]);
 
-        $admins = User::query()->where('role', 'admin')->get();
+        $review->load(['user', 'livro', 'requisicao']);
+
+        $admins = User::query()
+            ->where('role', User::ROLE_ADMIN)
+            ->get();
 
         if ($admins->isNotEmpty()) {
             Notification::send($admins, new NovaReviewPendenteNotification($review));

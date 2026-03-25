@@ -12,8 +12,10 @@
                 <li><a href="{{ route('livros.index') }}" class="{{ request()->routeIs('livros.*') ? 'active' : '' }}">Livros</a></li>
                 <li><a href="{{ route('autores.index') }}" class="{{ request()->routeIs('autores.*') ? 'active' : '' }}">Autores</a></li>
                 <li><a href="{{ route('editoras.index') }}" class="{{ request()->routeIs('editoras.*') ? 'active' : '' }}">Editoras</a></li>
+
                 @if (auth()->user()->isAdmin())
                     <li><a href="{{ route('cidadaos.index') }}" class="{{ request()->routeIs('cidadaos.*') ? 'active' : '' }}">Cidad&atilde;os</a></li>
+                    <li><a href="{{ route('admin.reviews.index') }}" class="{{ request()->routeIs('admin.reviews.*') ? 'active' : '' }}">Reviews</a></li>
                 @endif
             @endauth
         </ul>
@@ -60,4 +62,3 @@
         @endauth
     </div>
 </div>
-

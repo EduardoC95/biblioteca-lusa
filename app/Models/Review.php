@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Review extends Model
 {
+    public const ESTADO_SUSPENSO = 'suspenso';
+    public const ESTADO_ATIVO = 'ativo';
+    public const ESTADO_RECUSADO = 'recusado';
+
     protected $fillable = [
         'requisicao_id',
         'livro_id',
@@ -18,6 +22,14 @@ class Review extends Model
         'moderado_em',
         'moderado_por',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'rating' => 'integer',
+            'moderado_em' => 'datetime',
+        ];
+    }
 
     public function requisicao(): BelongsTo
     {

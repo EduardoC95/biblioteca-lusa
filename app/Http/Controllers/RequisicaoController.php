@@ -69,7 +69,6 @@ class RequisicaoController extends Controller
         $cidadao = User::query()->findOrFail($request->cidadaoId());
 
         $requisicao = DB::transaction(function () use ($livro, $cidadao): Requisicao {
-
             $livroAtivo = Requisicao::query()
                 ->where('livro_id', $livro->id)
                 ->ativas()
@@ -169,5 +168,15 @@ class RequisicaoController extends Controller
         ]);
 
         return back()->with('status', 'Devolução confirmada com sucesso.');
+    }
+
+    public function show(Requisicao $requisicao): View
+    {
+        $requisicao->load([
+            'livro',
+            'review',
+        ]);
+
+        return view('requisicoes.show', compact('requisicao'));
     }
 }

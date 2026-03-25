@@ -58,6 +58,38 @@
             </div>
 
             <div class="rounded-xl border border-cyan-300/20 bg-slate-900/70 p-5">
+                <h3 class="font-display text-xl text-cyan-200">Reviews</h3>
+
+                @php
+                    $reviewsAtivas = $livro->reviews->where('estado', 'ativo');
+                @endphp
+
+                @if($reviewsAtivas->count())
+                    <div class="mt-4 space-y-4">
+                        @foreach ($reviewsAtivas as $review)
+                            <div class="rounded-lg border border-cyan-300/15 bg-slate-950/50 p-4">
+                                <div class="flex flex-wrap items-center justify-between gap-2">
+                                    <p class="font-semibold text-slate-100">{{ $review->user?->name ?? 'Cidadão' }}</p>
+
+                                    @if($review->rating)
+                                        <span class="badge badge-primary">{{ $review->rating }}/5</span>
+                                    @endif
+                                </div>
+
+                                <p class="mt-3 whitespace-pre-line text-slate-200">{{ $review->comentario }}</p>
+
+                                <p class="mt-3 text-xs text-slate-500">
+                                    {{ $review->created_at?->format('d/m/Y H:i') }}
+                                </p>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <p class="mt-3 text-slate-400">Ainda não existem reviews ativas para este livro.</p>
+                @endif
+            </div>
+
+            <div class="rounded-xl border border-cyan-300/20 bg-slate-900/70 p-5">
                 <h3 class="font-display text-xl text-cyan-200">Histórico de requisições</h3>
                 <div class="mt-3 overflow-x-auto">
                     <table class="table table-sm">
@@ -100,4 +132,3 @@
         </div>
     </div>
 </x-app-layout>
-

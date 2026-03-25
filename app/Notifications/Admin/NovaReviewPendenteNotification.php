@@ -30,7 +30,7 @@ class NovaReviewPendenteNotification extends Notification
             ->line('Foi submetida uma nova review.')
             ->line('Cidadão: ' . $this->review->user->name)
             ->line('Email: ' . $this->review->user->email)
-            ->line('Livro: ' . $this->review->livro->titulo)
+            ->line('Livro: ' . $this->review->livro->nome)
             ->action('Ver detalhe da review', $url);
     }
 }

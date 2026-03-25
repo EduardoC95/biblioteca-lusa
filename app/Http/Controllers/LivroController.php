@@ -154,13 +154,14 @@ class LivroController extends Controller
 
     public function show(Livro $livro): View
     {
-        $livro->load([
-            'editora',
-            'autores',
-            'requisicoes' => fn ($q) => $q->with('cidadao')->orderByDesc('created_at'),
-        ]);
+    $livro->load([
+        'editora',
+        'autores',
+        'requisicoes' => fn ($q) => $q->with('cidadao')->orderByDesc('created_at'),
+        'reviews.user',
+    ]);
 
-        return view('livros.show', compact('livro'));
+    return view('livros.show', compact('livro'));
     }
 
     public function edit(Livro $livro): View

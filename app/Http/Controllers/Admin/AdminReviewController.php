@@ -35,24 +35,31 @@ class AdminReviewController extends Controller
     public function update(Request $request, Review $review): RedirectResponse
     {
         $validated = $request->validate([
-            'estado' => ['required', 'in:ativo,recusado'],
+            'estado' => ['required', 'in:' . Review::ESTADO_ATIVO . ',' . Review::ESTADO_RECUSADO],
             'justificacao_recusa' => ['nullable', 'string', 'max:2000'],
         ]);
 
-        if ($validated['estado'] === 'recusado' && blank($validated['justificacao_recusa'] ?? null)) {
+        if (
+            $validated['estado'] === Review::ESTADO_RECUSADO
+            && blank($validated['justificacao_recusa'] ?? null)
+        ) {
             return back()
-                ->withErrors(['justificacao_recusa' => 'A justificação é obrigatória quando a review é recusada.'])
+                ->withErrors([
+                    'justificacao_recusa' => 'A justificação é obrigatória quando a review é recusada.',
+                ])
                 ->withInput();
         }
 
         $review->update([
             'estado' => $validated['estado'],
-            'justificacao_recusa' => $validated['estado'] === 'recusado'
+            'justificacao_recusa' => $validated['estado'] === Review::ESTADO_RECUSADO
                 ? $validated['justificacao_recusa']
                 : null,
             'moderado_em' => now(),
             'moderado_por' => $request->user()->id,
         ]);
+
+        $review->load(['user', 'livro']);
 
         $review->user->notify(new ReviewModeradaNotification($review));
 

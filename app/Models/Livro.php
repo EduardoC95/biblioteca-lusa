@@ -57,8 +57,8 @@ class Livro extends Model
         return ! $this->requisicoes()->whereNull('data_real_entrega')->exists();
     }
 
-    public function reviews()
+    public function reviews(): HasMany
     {
-    return $this->hasMany(\App\Models\Review::class);
+        return $this->hasMany(Review::class);
     }
 }

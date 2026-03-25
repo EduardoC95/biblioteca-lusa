@@ -25,10 +25,13 @@ class ReviewModeradaNotification extends Notification
         $mail = (new MailMessage)
             ->subject('Atualização da sua review')
             ->greeting('Olá, ' . $notifiable->name . '!')
-            ->line('A sua review ao livro "' . $this->review->livro->titulo . '" foi analisada.')
+            ->line('A sua review ao livro "' . $this->review->livro->nome . '" foi analisada.')
             ->line('Estado: ' . ucfirst($this->review->estado));
 
-        if ($this->review->estado === 'recusado' && $this->review->justificacao_recusa) {
+        if (
+            $this->review->estado === Review::ESTADO_RECUSADO
+            && $this->review->justificacao_recusa
+        ) {
             $mail->line('Justificação: ' . $this->review->justificacao_recusa);
         }
 
