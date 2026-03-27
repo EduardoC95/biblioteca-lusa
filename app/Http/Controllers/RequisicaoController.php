@@ -8,6 +8,7 @@ use App\Mail\RequisicaoCriadaMail;
 use App\Models\Livro;
 use App\Models\Requisicao;
 use App\Models\User;
+use App\Services\AlertaDisponibilidadeService;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -150,14 +151,16 @@ class RequisicaoController extends Controller
         return back()->with('status', 'Entrega ao cidadão confirmada.');
     }
 
-    public function confirmarDevolucao(Request $request, Requisicao $requisicao): RedirectResponse
-    {
+    public function confirmarDevolucao(
+        Request $request,
+        Requisicao $requisicao,
+        AlertaDisponibilidadeService $alertaDisponibilidadeService
+    ): RedirectResponse {
         if ($requisicao->estado !== Requisicao::ESTADO_ATIVA) {
             return back()->with('status', 'Esta requisição já foi devolvida.');
         }
 
         $dataDevolucao = CarbonImmutable::parse($request->input('data_devolucao_real'));
-
         $dataEntrega = CarbonImmutable::instance($requisicao->data_entrega_real);
 
         $requisicao->update([
@@ -166,6 +169,9 @@ class RequisicaoController extends Controller
             'estado' => Requisicao::ESTADO_DEVOLVIDA,
             'devolucao_confirmada_por_admin_id' => $request->user()->id,
         ]);
+
+        $requisicao->load('livro');
+        $alertaDisponibilidadeService->enviarAlertasSeDisponivel($requisicao->livro);
 
         return back()->with('status', 'Devolução confirmada com sucesso.');
     }

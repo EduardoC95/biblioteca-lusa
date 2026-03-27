@@ -76,6 +76,11 @@ class User extends Authenticatable
         return $this->hasMany(Requisicao::class, 'cidadao_id');
     }
 
+    public function alertasDisponibilidade(): HasMany
+    {
+        return $this->hasMany(AlertaDisponibilidade::class);
+    }
+
     public function isAdmin(): bool
     {
         return $this->role === self::ROLE_ADMIN;
@@ -86,8 +91,8 @@ class User extends Authenticatable
         return $this->role === self::ROLE_CIDADAO;
     }
 
-    public function reviews()
+    public function reviews(): HasMany
     {
-    return $this->hasMany(\App\Models\Review::class);
+        return $this->hasMany(\App\Models\Review::class);
     }
 }

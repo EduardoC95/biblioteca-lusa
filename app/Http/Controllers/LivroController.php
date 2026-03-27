@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateLivroRequest;
 use App\Models\Autor;
 use App\Models\Editora;
 use App\Models\Livro;
+use App\Services\AlertaDisponibilidadeService;
 use App\Services\GoogleBooksService;
 use App\Services\LivrosRelacionadosService;
 use Illuminate\Http\RedirectResponse;
@@ -153,8 +154,11 @@ class LivroController extends Controller
         return redirect()->route('livros.index')->with('status', 'Livro criado com sucesso.');
     }
 
-    public function show(Livro $livro, LivrosRelacionadosService $livrosRelacionadosService): View
-    {
+    public function show(
+        Livro $livro,
+        LivrosRelacionadosService $livrosRelacionadosService,
+        AlertaDisponibilidadeService $alertaDisponibilidadeService
+    ): View {
         $livro->load([
             'editora',
             'autores',
@@ -164,7 +168,11 @@ class LivroController extends Controller
 
         $relacionados = $livrosRelacionadosService->relacionadosPara($livro, 4);
 
-        return view('livros.show', compact('livro', 'relacionados'));
+        $jaTemAlertaDisponibilidade = auth()->check() && auth()->user()->isCidadao()
+            ? $alertaDisponibilidadeService->utilizadorJaTemAlertaPendente($livro, auth()->id())
+            : false;
+
+        return view('livros.show', compact('livro', 'relacionados', 'jaTemAlertaDisponibilidade'));
     }
 
     public function edit(Livro $livro): View

@@ -12,6 +12,7 @@ use App\Http\Controllers\PesquisaLivrosController;
 use App\Http\Controllers\RequisicaoController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\Admin\AdminReviewController;
+use App\Http\Controllers\AlertaDisponibilidadeController;
 use App\Models\Autor;
 use App\Models\Editora;
 use App\Models\Livro;
@@ -68,6 +69,9 @@ Route::middleware([
 
     Route::patch('/requisicoes/{requisicao}/confirmar-devolucao', [RequisicaoController::class, 'confirmarDevolucao'])
         ->name('requisicoes.confirmar-devolucao');
+
+    Route::post('/livros/{livro}/alerta-disponibilidade', [AlertaDisponibilidadeController::class, 'store'])
+        ->name('livros.alerta-disponibilidade');
 
     Route::middleware('admin')->group(function () {
         Route::get('/livros/exportar/excel', [LivroController::class, 'export'])->name('livros.export');

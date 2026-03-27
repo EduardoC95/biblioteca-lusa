@@ -61,4 +61,9 @@ class Livro extends Model
     {
         return $this->hasMany(Review::class);
     }
+
+    public function alertasDisponibilidade(): HasMany
+    {
+        return $this->hasMany(AlertaDisponibilidade::class);
+    }
 }

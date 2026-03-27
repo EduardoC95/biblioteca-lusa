@@ -3,6 +3,10 @@
         <h2 class="font-display text-3xl text-cyan-200">{{ $livro->nome }}</h2>
     </x-slot>
 
+    @php
+        $livroIndisponivel = $livro->requisicoes->where('estado', \App\Models\Requisicao::ESTADO_ATIVA)->isNotEmpty();
+    @endphp
+
     <div class="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
         <div class="rounded-xl border border-cyan-300/20 bg-slate-900/70 p-4">
             @if ($livro->capa_imagem)
@@ -16,12 +20,30 @@
             <div class="rounded-xl border border-cyan-300/20 bg-slate-900/70 p-5">
                 <h3 class="font-display text-xl text-cyan-200">Estado</h3>
                 <p class="mt-2">
-                    <span class="badge {{ $livro->requisicoes->firstWhere('data_real_entrega', null) ? 'badge-warning' : 'badge-success' }}">
-                        {{ $livro->requisicoes->firstWhere('data_real_entrega', null) ? 'Indisponível para requisição' : 'Disponível para requisição' }}
+                    <span class="badge {{ $livroIndisponivel ? 'badge-warning' : 'badge-success' }}">
+                        {{ $livroIndisponivel ? 'Indisponível para requisição' : 'Disponível para requisição' }}
                     </span>
                 </p>
-                <div class="mt-3">
-                    <a href="{{ route('requisicoes.index', ['livro_id' => $livro->id]) }}" class="btn btn-primary">Requisitar</a>
+
+                <div class="mt-3 flex flex-wrap gap-2">
+                    @if (! $livroIndisponivel)
+                        <a href="{{ route('requisicoes.index', ['livro_id' => $livro->id]) }}" class="btn btn-primary">
+                            Requisitar
+                        </a>
+                    @endif
+
+                    @if ($livroIndisponivel && auth()->check() && auth()->user()->isCidadao())
+                        @if ($jaTemAlertaDisponibilidade ?? false)
+                            <span class="btn btn-disabled">Alerta já registado</span>
+                        @else
+                            <form method="POST" action="{{ route('livros.alerta-disponibilidade', $livro) }}">
+                                @csrf
+                                <button type="submit" class="btn btn-primary">
+                                    Avisar-me quando estiver disponível
+                                </button>
+                            </form>
+                        @endif
+                    @endif
                 </div>
             </div>
 
