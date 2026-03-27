@@ -155,24 +155,27 @@ class LivroController extends Controller
     }
 
     public function show(
-        Livro $livro,
-        LivrosRelacionadosService $livrosRelacionadosService,
-        AlertaDisponibilidadeService $alertaDisponibilidadeService
+    Request $request,
+    Livro $livro,
+    LivrosRelacionadosService $livrosRelacionadosService,
+    AlertaDisponibilidadeService $alertaDisponibilidadeService
     ): View {
-        $livro->load([
-            'editora',
-            'autores',
-            'requisicoes' => fn ($q) => $q->with('cidadao')->orderByDesc('created_at'),
-            'reviews.user',
-        ]);
+    $livro->load([
+        'editora',
+        'autores',
+        'requisicoes' => fn ($q) => $q->with('cidadao')->orderByDesc('created_at'),
+        'reviews.user',
+    ]);
 
-        $relacionados = $livrosRelacionadosService->relacionadosPara($livro, 4);
+    $relacionados = $livrosRelacionadosService->relacionadosPara($livro, 4);
 
-        $jaTemAlertaDisponibilidade = auth()->check() && auth()->user()->isCidadao()
-            ? $alertaDisponibilidadeService->utilizadorJaTemAlertaPendente($livro, auth()->id())
-            : false;
+    $user = $request->user();
 
-        return view('livros.show', compact('livro', 'relacionados', 'jaTemAlertaDisponibilidade'));
+    $jaTemAlertaDisponibilidade = $user && $user->isCidadao()
+        ? $alertaDisponibilidadeService->utilizadorJaTemAlertaPendente($livro, $user->id)
+        : false;
+
+    return view('livros.show', compact('livro', 'relacionados', 'jaTemAlertaDisponibilidade'));
     }
 
     public function edit(Livro $livro): View

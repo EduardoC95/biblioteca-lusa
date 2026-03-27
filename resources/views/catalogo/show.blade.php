@@ -3,6 +3,10 @@
         <h2 class="font-display text-3xl text-cyan-200">Detalhe do Cat&aacute;logo</h2>
     </x-slot>
 
+    @php
+        $livroIndisponivel = $livro->requisicoes->where('estado', \App\Models\Requisicao::ESTADO_ATIVA)->isNotEmpty();
+    @endphp
+
     <a href="{{ route('catalogo.index') }}" class="btn btn-outline btn-sm">Voltar ao cat&aacute;logo</a>
 
     <div class="mt-4 grid gap-6 rounded-xl border border-cyan-300/20 bg-slate-900/70 p-5 lg:grid-cols-[260px_minmax(0,1fr)]">
@@ -16,12 +20,13 @@
 
         <div>
             <p class="text-xs uppercase tracking-widest text-slate-400">
-                @if ($livro->requisicaoAtiva)
+                @if ($livroIndisponivel)
                     Indispon&iacute;vel para requisi&ccedil;&atilde;o
                 @else
                     Dispon&iacute;vel para requisi&ccedil;&atilde;o
                 @endif
             </p>
+
             <h1 class="mt-2 font-display text-4xl text-cyan-100">{{ $livro->nome }}</h1>
             <p class="mt-2 text-slate-200">ISBN {{ $livro->isbn }}</p>
             <p class="text-slate-200">Editora: {{ $livro->editora?->nome ?? '-' }}</p>
@@ -35,7 +40,20 @@
 
             <div class="mt-6">
                 @auth
-                    <a href="{{ route('requisicoes.index', ['livro_id' => $livro->id]) }}" class="btn btn-primary {{ $livro->requisicaoAtiva ? 'btn-disabled' : '' }}">Requisitar</a>
+                    @if (! $livroIndisponivel)
+                        <a href="{{ route('requisicoes.index', ['livro_id' => $livro->id]) }}" class="btn btn-primary">
+                            Requisitar
+                        </a>
+                    @elseif (auth()->user()->isCidadao())
+                        <form method="POST" action="{{ route('livros.alerta-disponibilidade', $livro) }}">
+                            @csrf
+                            <button type="submit" class="btn btn-primary">
+                                Avisar-me quando estiver dispon&iacute;vel
+                            </button>
+                        </form>
+                    @else
+                        <span class="btn btn-disabled">Indispon&iacute;vel</span>
+                    @endif
                 @else
                     <a href="{{ route('login') }}" class="btn btn-primary">Iniciar sess&atilde;o</a>
                 @endauth

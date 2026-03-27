@@ -19,7 +19,7 @@ class CatalogoController extends Controller
         $search = trim((string) $request->string('q'));
 
         $livros = Livro::query()
-            ->with(['editora', 'autores', 'requisicaoAtiva'])
+            ->with(['editora', 'autores', 'requisicoes', 'requisicaoAtiva'])
             ->get()
             ->filter(function (Livro $livro) use ($search): bool {
                 if ($search === '') {
@@ -46,7 +46,7 @@ class CatalogoController extends Controller
             $request->session()->put('catalogo_visitante', true);
         }
 
-        $livro->load(['editora', 'autores', 'requisicaoAtiva.cidadao']);
+        $livro->load(['editora', 'autores', 'requisicoes', 'requisicaoAtiva.cidadao']);
 
         return view('catalogo.show', [
             'livro' => $livro,
