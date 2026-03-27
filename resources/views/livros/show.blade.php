@@ -44,6 +44,48 @@
                 <p class="mt-3 whitespace-pre-line text-slate-200">{{ $livro->sinopse ?: 'Sem sinopse disponível.' }}</p>
             </div>
 
+            @if(isset($relacionados) && $relacionados->isNotEmpty())
+                <div class="rounded-xl border border-cyan-300/20 bg-slate-900/70 p-5">
+                    <h3 class="font-display text-xl text-cyan-200">Livros Relacionados</h3>
+                    <p class="mt-2 text-sm text-slate-400">
+                        Sugestões automáticas com base na semelhança entre descrições e conteúdo textual.
+                    </p>
+
+                    <div class="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                        @foreach ($relacionados as $relacionado)
+                            <a href="{{ route('livros.show', $relacionado) }}"
+                               class="group rounded-xl border border-cyan-300/20 bg-slate-950/60 p-4 transition hover:border-cyan-300/40 hover:bg-slate-900">
+                                <div class="mb-3">
+                                    @if ($relacionado->capa_imagem)
+                                        <img
+                                            src="{{ \Illuminate\Support\Facades\Storage::url($relacionado->capa_imagem) }}"
+                                            alt="Capa de {{ $relacionado->nome }}"
+                                            class="h-48 w-full rounded-lg border border-cyan-300/20 object-cover"
+                                        />
+                                    @else
+                                        <div class="flex h-48 items-center justify-center rounded-lg border border-dashed border-cyan-300/20 text-sm text-slate-500">
+                                            Sem capa
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <h4 class="line-clamp-2 font-semibold text-cyan-200 group-hover:text-cyan-100">
+                                    {{ $relacionado->nome }}
+                                </h4>
+
+                                <p class="mt-2 text-sm text-slate-400">
+                                    {{ $relacionado->editora?->nome ?? 'Editora indisponível' }}
+                                </p>
+
+                                <p class="mt-3 text-sm text-slate-300">
+                                    {{ \Illuminate\Support\Str::limit($relacionado->sinopse ?: 'Sem sinopse disponível.', 120) }}
+                                </p>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
             <div class="rounded-xl border border-cyan-300/20 bg-slate-900/70 p-5">
                 <div class="grid gap-3 md:grid-cols-2">
                     <div>

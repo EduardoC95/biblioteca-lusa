@@ -9,6 +9,7 @@ use App\Models\Autor;
 use App\Models\Editora;
 use App\Models\Livro;
 use App\Services\GoogleBooksService;
+use App\Services\LivrosRelacionadosService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -152,16 +153,18 @@ class LivroController extends Controller
         return redirect()->route('livros.index')->with('status', 'Livro criado com sucesso.');
     }
 
-    public function show(Livro $livro): View
+    public function show(Livro $livro, LivrosRelacionadosService $livrosRelacionadosService): View
     {
-    $livro->load([
-        'editora',
-        'autores',
-        'requisicoes' => fn ($q) => $q->with('cidadao')->orderByDesc('created_at'),
-        'reviews.user',
-    ]);
+        $livro->load([
+            'editora',
+            'autores',
+            'requisicoes' => fn ($q) => $q->with('cidadao')->orderByDesc('created_at'),
+            'reviews.user',
+        ]);
 
-    return view('livros.show', compact('livro'));
+        $relacionados = $livrosRelacionadosService->relacionadosPara($livro, 4);
+
+        return view('livros.show', compact('livro', 'relacionados'));
     }
 
     public function edit(Livro $livro): View
