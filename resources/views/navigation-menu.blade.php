@@ -12,6 +12,7 @@
                 <li><a href="{{ route('livros.index') }}" class="{{ request()->routeIs('livros.*') ? 'active' : '' }}">Livros</a></li>
                 <li><a href="{{ route('autores.index') }}" class="{{ request()->routeIs('autores.*') ? 'active' : '' }}">Autores</a></li>
                 <li><a href="{{ route('editoras.index') }}" class="{{ request()->routeIs('editoras.*') ? 'active' : '' }}">Editoras</a></li>
+                <li><a href="{{ route('cart.index') }}" class="menu-item flex items-center gap-2"> Carrinho</a>
 
                 @if (auth()->user()->isAdmin())
                     <li><a href="{{ route('cidadaos.index') }}" class="{{ request()->routeIs('cidadaos.*') ? 'active' : '' }}">Cidad&atilde;os</a></li>

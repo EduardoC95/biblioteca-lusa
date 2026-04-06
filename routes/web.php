@@ -13,6 +13,9 @@ use App\Http\Controllers\RequisicaoController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\Admin\AdminReviewController;
 use App\Http\Controllers\AlertaDisponibilidadeController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\StripeWebhookController;
 use App\Models\Autor;
 use App\Models\Editora;
 use App\Models\Livro;
@@ -108,4 +111,18 @@ Route::middleware([
         Route::get('/reviews/{review}', [AdminReviewController::class, 'show'])->name('reviews.show');
         Route::patch('/reviews/{review}', [AdminReviewController::class, 'update'])->name('reviews.update');
     });
+
+    Route::middleware(['auth'])->group(function () {
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/livros/{livro}', [CartController::class, 'store'])->name('cart.store');
+    Route::delete('/cart/livros/{livro}', [CartController::class, 'destroy'])->name('cart.destroy');
+
+    Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout.show');
+    Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
+    Route::get('/checkout/sucesso', [CheckoutController::class, 'success'])->name('checkout.success');
+    Route::get('/checkout/cancelado', [CheckoutController::class, 'cancel'])->name('checkout.cancel');
+    });
+
+    Route::post('/stripe/webhook', StripeWebhookController::class)
+    ->name('stripe.webhook');
 });

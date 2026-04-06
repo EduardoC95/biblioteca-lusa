@@ -95,4 +95,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(\App\Models\Review::class);
     }
+
+    public function cart()
+    {
+    return $this->hasOne(\App\Models\Cart::class);
+    }
+
+    public function orders()
+    {
+    return $this->hasMany(\App\Models\Order::class);
+    }
 }

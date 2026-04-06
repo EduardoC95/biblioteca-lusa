@@ -38,12 +38,21 @@
                 @endforeach
             </div>
 
-            <div class="mt-6">
+            <div class="mt-6 flex flex-wrap gap-3">
                 @auth
                     @if (! $livroIndisponivel)
                         <a href="{{ route('requisicoes.index', ['livro_id' => $livro->id]) }}" class="btn btn-primary">
                             Requisitar
                         </a>
+
+                        @if (auth()->user()->isCidadao())
+                            <form method="POST" action="{{ route('cart.store', $livro) }}">
+                                @csrf
+                                <button type="submit" class="btn btn-outline">
+                                    Adicionar ao carrinho
+                                </button>
+                            </form>
+                        @endif
                     @elseif (auth()->user()->isCidadao())
                         <form method="POST" action="{{ route('livros.alerta-disponibilidade', $livro) }}">
                             @csrf
@@ -51,6 +60,8 @@
                                 Avisar-me quando estiver dispon&iacute;vel
                             </button>
                         </form>
+
+                        <span class="btn btn-disabled">Compra indispon&iacute;vel</span>
                     @else
                         <span class="btn btn-disabled">Indispon&iacute;vel</span>
                     @endif
