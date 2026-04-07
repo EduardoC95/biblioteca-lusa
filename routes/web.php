@@ -22,7 +22,9 @@ use App\Models\Editora;
 use App\Models\Livro;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Schedule;
 
+Schedule::command('carts:send-help-emails')->everyTenMinutes();
 Route::view('/', 'landing')->name('landing');
 
 Route::get('/catalogo', [CatalogoController::class, 'index'])->name('catalogo.index');
