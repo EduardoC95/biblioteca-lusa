@@ -12,6 +12,7 @@ use App\Http\Controllers\PesquisaLivrosController;
 use App\Http\Controllers\RequisicaoController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\Admin\AdminReviewController;
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\AlertaDisponibilidadeController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
@@ -110,6 +111,17 @@ Route::middleware([
         Route::get('/reviews', [AdminReviewController::class, 'index'])->name('reviews.index');
         Route::get('/reviews/{review}', [AdminReviewController::class, 'show'])->name('reviews.show');
         Route::patch('/reviews/{review}', [AdminReviewController::class, 'update'])->name('reviews.update');
+    });
+
+    Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/compras', [OrderController::class, 'index'])
+        ->name('admin.orders.index');
+
+    Route::patch('/admin/compras/{order}/approve', [OrderController::class, 'approve'])
+        ->name('admin.orders.approve');
+
+    Route::patch('/admin/compras/{order}/reject', [OrderController::class, 'reject'])
+        ->name('admin.orders.reject');
     });
 
     Route::middleware(['auth'])->group(function () {
