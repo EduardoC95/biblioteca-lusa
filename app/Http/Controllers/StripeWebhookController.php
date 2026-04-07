@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\Order;
+use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Stripe\Exception\SignatureVerificationException;
@@ -44,9 +45,26 @@ class StripeWebhookController extends Controller
                         'paid_at' => now(),
                     ]);
 
-                    Cart::query()
+                    ActivityLogger::log(
+                        userId: $order->user_id,
+                        module: 'orders',
+                        objectId: $order->id,
+                        action: 'payment_confirmed',
+                        description: 'Pagamento confirmado via Stripe',
+                        request: $request
+                    );
+
+                    $cart = Cart::query()
                         ->where('user_id', $order->user_id)
-                        ->first()?->items()->delete();
+                        ->first();
+
+                    if ($cart) {
+                        $cart->update([
+                            'converted_at' => now(),
+                        ]);
+
+                        $cart->items()->delete();
+                    }
                 }
             }
         }

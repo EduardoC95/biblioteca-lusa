@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Cart;
 use App\Notifications\AbandonedCartHelpNotification;
+use App\Support\ActivityLogger;
 use Illuminate\Console\Command;
 
 class SendCartHelpEmails extends Command
@@ -33,6 +34,15 @@ class SendCartHelpEmails extends Command
             $cart->update([
                 'help_email_sent_at' => now(),
             ]);
+
+            ActivityLogger::log(
+                userId: $cart->user->id,
+                module: 'cart',
+                objectId: $cart->id,
+                action: 'help_email_sent',
+                description: 'Email de ajuda enviado por carrinho abandonado',
+                request: null
+            );
 
             $this->info("Email enviado para user {$cart->user->id}");
         }

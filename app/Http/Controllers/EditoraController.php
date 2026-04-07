@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreEditoraRequest;
 use App\Http\Requests\UpdateEditoraRequest;
 use App\Models\Editora;
+use App\Support\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -74,7 +75,16 @@ class EditoraController extends Controller
             ? $request->file('logotipo')->store('editoras', 'public')
             : null;
 
-        Editora::create($data);
+        $editora = Editora::create($data);
+
+        ActivityLogger::log(
+            userId: $request->user()?->id,
+            module: 'editoras',
+            objectId: $editora->id,
+            action: 'create',
+            description: 'Editora criada: ' . $editora->nome,
+            request: $request
+        );
 
         return redirect()->route('editoras.index')->with('status', 'Editora criada com sucesso.');
     }
@@ -108,16 +118,37 @@ class EditoraController extends Controller
 
         $editora->update($data);
 
+        ActivityLogger::log(
+            userId: $request->user()?->id,
+            module: 'editoras',
+            objectId: $editora->id,
+            action: 'update',
+            description: 'Editora atualizada: ' . $editora->nome,
+            request: $request
+        );
+
         return redirect()->route('editoras.index')->with('status', 'Editora atualizada com sucesso.');
     }
 
-    public function destroy(Editora $editora): RedirectResponse
+    public function destroy(Request $request, Editora $editora): RedirectResponse
     {
+        $editoraNome = $editora->nome;
+        $editoraId = $editora->id;
+
         if ($editora->logotipo) {
             Storage::disk('public')->delete($editora->logotipo);
         }
 
         $editora->delete();
+
+        ActivityLogger::log(
+            userId: $request->user()?->id,
+            module: 'editoras',
+            objectId: $editoraId,
+            action: 'delete',
+            description: 'Editora removida: ' . $editoraNome,
+            request: $request
+        );
 
         return redirect()->route('editoras.index')->with('status', 'Editora removida com sucesso.');
     }

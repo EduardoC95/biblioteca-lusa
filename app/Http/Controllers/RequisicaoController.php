@@ -9,6 +9,7 @@ use App\Models\Livro;
 use App\Models\Requisicao;
 use App\Models\User;
 use App\Services\AlertaDisponibilidadeService;
+use App\Support\ActivityLogger;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -129,6 +130,15 @@ class RequisicaoController extends Controller
             Mail::to($adminEmails)->send(new RequisicaoCriadaMail($requisicao, true));
         }
 
+        ActivityLogger::log(
+            userId: $request->user()->id,
+            module: 'requisicoes',
+            objectId: $requisicao->id,
+            action: 'create',
+            description: 'Requisição criada para o livro ID ' . $livro->id . ' pelo cidadão ID ' . $cidadao->id,
+            request: $request
+        );
+
         return redirect()
             ->route('requisicoes.index')
             ->with('status', 'Requisição criada com sucesso.');
@@ -147,6 +157,15 @@ class RequisicaoController extends Controller
             'data_devolucao_prevista' => $dataEntrega->addDays(5),
             'estado' => Requisicao::ESTADO_ATIVA,
         ]);
+
+        ActivityLogger::log(
+            userId: $request->user()->id,
+            module: 'requisicoes',
+            objectId: $requisicao->id,
+            action: 'confirm_delivery',
+            description: 'Entrega da requisição confirmada',
+            request: $request
+        );
 
         return back()->with('status', 'Entrega ao cidadão confirmada.');
     }
@@ -172,6 +191,15 @@ class RequisicaoController extends Controller
 
         $requisicao->load('livro');
         $alertaDisponibilidadeService->enviarAlertasSeDisponivel($requisicao->livro);
+
+        ActivityLogger::log(
+            userId: $request->user()->id,
+            module: 'requisicoes',
+            objectId: $requisicao->id,
+            action: 'return',
+            description: 'Devolução da requisição confirmada para o livro ID ' . $requisicao->livro_id,
+            request: $request
+        );
 
         return back()->with('status', 'Devolução confirmada com sucesso.');
     }

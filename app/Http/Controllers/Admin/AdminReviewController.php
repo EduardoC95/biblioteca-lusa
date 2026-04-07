@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Review;
 use App\Notifications\Cidadao\ReviewModeradaNotification;
+use App\Support\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -62,6 +63,17 @@ class AdminReviewController extends Controller
         $review->load(['user', 'livro']);
 
         $review->user->notify(new ReviewModeradaNotification($review));
+
+        ActivityLogger::log(
+            userId: $request->user()->id,
+            module: 'reviews',
+            objectId: $review->id,
+            action: $validated['estado'] === Review::ESTADO_ATIVO ? 'approve' : 'reject',
+            description: $validated['estado'] === Review::ESTADO_ATIVO
+                ? 'Review aprovada pelo admin'
+                : 'Review recusada pelo admin',
+            request: $request
+        );
 
         return redirect()
             ->route('admin.reviews.show', $review)

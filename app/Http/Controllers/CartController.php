@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\Livro;
+use App\Support\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -32,6 +33,24 @@ class CartController extends Controller
 
         if (! $item->wasRecentlyCreated) {
             $item->increment('quantity');
+
+            ActivityLogger::log(
+                userId: $request->user()->id,
+                module: 'cart',
+                objectId: $cart->id,
+                action: 'update_quantity',
+                description: 'Quantidade aumentada para o livro ID ' . $livro->id,
+                request: $request
+            );
+        } else {
+            ActivityLogger::log(
+                userId: $request->user()->id,
+                module: 'cart',
+                objectId: $cart->id,
+                action: 'add_item',
+                description: 'Livro adicionado ao carrinho ID ' . $livro->id,
+                request: $request
+            );
         }
 
         $cart->touch();
@@ -48,6 +67,15 @@ class CartController extends Controller
         if ($cart) {
             $cart->items()->where('livro_id', $livro->id)->delete();
             $cart->touch();
+
+            ActivityLogger::log(
+                userId: $request->user()->id,
+                module: 'cart',
+                objectId: $cart->id,
+                action: 'remove_item',
+                description: 'Livro removido do carrinho ID ' . $livro->id,
+                request: $request
+            );
         }
 
         return back()->with('success', 'Livro removido do carrinho.');

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\Order;
+use App\Support\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -62,6 +63,15 @@ class CheckoutController extends Controller
             'total_amount' => $totalAmount,
             'currency' => 'eur',
         ]);
+
+        ActivityLogger::log(
+            userId: $request->user()->id,
+            module: 'orders',
+            objectId: $order->id,
+            action: 'create',
+            description: 'Encomenda criada com pagamento pendente no valor de ' . number_format($totalAmount / 100, 2, '.', '') . ' EUR',
+            request: $request
+        );
 
         foreach ($cart->items as $item) {
             $unitPrice = (int) ($item->livro->preco * 100);

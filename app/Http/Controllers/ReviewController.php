@@ -6,6 +6,7 @@ use App\Models\Requisicao;
 use App\Models\Review;
 use App\Models\User;
 use App\Notifications\Admin\NovaReviewPendenteNotification;
+use App\Support\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
@@ -47,6 +48,15 @@ class ReviewController extends Controller
         if ($admins->isNotEmpty()) {
             Notification::send($admins, new NovaReviewPendenteNotification($review));
         }
+
+        ActivityLogger::log(
+            userId: $user->id,
+            module: 'reviews',
+            objectId: $review->id,
+            action: 'create',
+            description: 'Review criado para o livro ID ' . $requisicao->livro_id . ' com estado suspenso',
+            request: $request
+        );
 
         return back()->with('success', 'Review submetido com sucesso. Ficará visível após aprovação.');
     }

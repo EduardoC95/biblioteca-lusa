@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreAutorRequest;
 use App\Http\Requests\UpdateAutorRequest;
 use App\Models\Autor;
+use App\Support\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -71,7 +72,16 @@ class AutorController extends Controller
             ? $request->file('foto')->store('autores', 'public')
             : null;
 
-        Autor::create($data);
+        $autor = Autor::create($data);
+
+        ActivityLogger::log(
+            userId: $request->user()?->id,
+            module: 'autores',
+            objectId: $autor->id,
+            action: 'create',
+            description: 'Autor criado: ' . $autor->nome,
+            request: $request
+        );
 
         return redirect()->route('autores.index')->with('status', 'Autor criado com sucesso.');
     }
@@ -102,16 +112,37 @@ class AutorController extends Controller
 
         $autor->update($data);
 
+        ActivityLogger::log(
+            userId: $request->user()?->id,
+            module: 'autores',
+            objectId: $autor->id,
+            action: 'update',
+            description: 'Autor atualizado: ' . $autor->nome,
+            request: $request
+        );
+
         return redirect()->route('autores.index')->with('status', 'Autor atualizado com sucesso.');
     }
 
-    public function destroy(Autor $autor): RedirectResponse
+    public function destroy(Request $request, Autor $autor): RedirectResponse
     {
+        $autorNome = $autor->nome;
+        $autorId = $autor->id;
+
         if ($autor->foto) {
             Storage::disk('public')->delete($autor->foto);
         }
 
         $autor->delete();
+
+        ActivityLogger::log(
+            userId: $request->user()?->id,
+            module: 'autores',
+            objectId: $autorId,
+            action: 'delete',
+            description: 'Autor removido: ' . $autorNome,
+            request: $request
+        );
 
         return redirect()->route('autores.index')->with('status', 'Autor removido com sucesso.');
     }

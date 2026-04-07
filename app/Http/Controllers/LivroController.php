@@ -11,6 +11,7 @@ use App\Models\Livro;
 use App\Services\AlertaDisponibilidadeService;
 use App\Services\GoogleBooksService;
 use App\Services\LivrosRelacionadosService;
+use App\Support\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -151,31 +152,40 @@ class LivroController extends Controller
         $livro = Livro::create($data);
         $livro->autores()->sync($authorIds);
 
+        ActivityLogger::log(
+            userId: $request->user()?->id,
+            module: 'livros',
+            objectId: $livro->id,
+            action: 'create',
+            description: 'Livro criado: ' . $livro->nome,
+            request: $request
+        );
+
         return redirect()->route('livros.index')->with('status', 'Livro criado com sucesso.');
     }
 
     public function show(
-    Request $request,
-    Livro $livro,
-    LivrosRelacionadosService $livrosRelacionadosService,
-    AlertaDisponibilidadeService $alertaDisponibilidadeService
+        Request $request,
+        Livro $livro,
+        LivrosRelacionadosService $livrosRelacionadosService,
+        AlertaDisponibilidadeService $alertaDisponibilidadeService
     ): View {
-    $livro->load([
-        'editora',
-        'autores',
-        'requisicoes' => fn ($q) => $q->with('cidadao')->orderByDesc('created_at'),
-        'reviews.user',
-    ]);
+        $livro->load([
+            'editora',
+            'autores',
+            'requisicoes' => fn ($q) => $q->with('cidadao')->orderByDesc('created_at'),
+            'reviews.user',
+        ]);
 
-    $relacionados = $livrosRelacionadosService->relacionadosPara($livro, 4);
+        $relacionados = $livrosRelacionadosService->relacionadosPara($livro, 4);
 
-    $user = $request->user();
+        $user = $request->user();
 
-    $jaTemAlertaDisponibilidade = $user && $user->isCidadao()
-        ? $alertaDisponibilidadeService->utilizadorJaTemAlertaPendente($livro, $user->id)
-        : false;
+        $jaTemAlertaDisponibilidade = $user && $user->isCidadao()
+            ? $alertaDisponibilidadeService->utilizadorJaTemAlertaPendente($livro, $user->id)
+            : false;
 
-    return view('livros.show', compact('livro', 'relacionados', 'jaTemAlertaDisponibilidade'));
+        return view('livros.show', compact('livro', 'relacionados', 'jaTemAlertaDisponibilidade'));
     }
 
     public function edit(Livro $livro): View
@@ -208,11 +218,23 @@ class LivroController extends Controller
         $livro->update($data);
         $livro->autores()->sync($authorIds);
 
+        ActivityLogger::log(
+            userId: $request->user()?->id,
+            module: 'livros',
+            objectId: $livro->id,
+            action: 'update',
+            description: 'Livro atualizado: ' . $livro->nome,
+            request: $request
+        );
+
         return redirect()->route('livros.index')->with('status', 'Livro atualizado com sucesso.');
     }
 
-    public function destroy(Livro $livro): RedirectResponse
+    public function destroy(Request $request, Livro $livro): RedirectResponse
     {
+        $livroNome = $livro->nome;
+        $livroId = $livro->id;
+
         if ($livro->capa_imagem) {
             Storage::disk('public')->delete($livro->capa_imagem);
         }
@@ -220,11 +242,29 @@ class LivroController extends Controller
         $livro->autores()->detach();
         $livro->delete();
 
+        ActivityLogger::log(
+            userId: $request->user()?->id,
+            module: 'livros',
+            objectId: $livroId,
+            action: 'delete',
+            description: 'Livro removido: ' . $livroNome,
+            request: $request
+        );
+
         return redirect()->route('livros.index')->with('status', 'Livro removido com sucesso.');
     }
 
-    public function export(): BinaryFileResponse
+    public function export(Request $request): BinaryFileResponse
     {
+        ActivityLogger::log(
+            userId: $request->user()?->id,
+            module: 'livros',
+            objectId: null,
+            action: 'export',
+            description: 'Exportação de livros para Excel',
+            request: $request
+        );
+
         return Excel::download(new LivrosExport(), 'livros.xlsx');
     }
 
