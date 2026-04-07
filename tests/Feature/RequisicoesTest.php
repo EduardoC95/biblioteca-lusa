@@ -62,7 +62,7 @@ class RequisicoesTest extends TestCase
             ->assertSessionHasErrors('livro_id');
     }
 
-    public function test_admin_pode_confirmar_entrega_e_calcular_dias_decorridos(): void
+    public function test_admin_pode_confirmar_entrega(): void
     {
         $admin = User::factory()->create(['role' => User::ROLE_ADMIN]);
         $cidadao = User::factory()->create(['role' => User::ROLE_CIDADAO]);
@@ -82,9 +82,9 @@ class RequisicoesTest extends TestCase
 
         $requisicao->refresh();
 
-        $this->assertSame('2026-03-06', $requisicao->data_real_entrega?->format('Y-m-d'));
-        $this->assertSame(5, $requisicao->dias_decorridos);
-        $this->assertSame($admin->id, $requisicao->devolucao_confirmada_por_admin_id);
+        $this->assertSame('2026-03-06', $requisicao->data_entrega_real?->format('Y-m-d'));
+        $this->assertSame('2026-03-11', $requisicao->data_devolucao_prevista?->format('Y-m-d'));
+        $this->assertSame(Requisicao::ESTADO_ATIVA, $requisicao->estado);
 
         CarbonImmutable::setTestNow();
     }

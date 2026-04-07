@@ -3,10 +3,10 @@
 namespace App\Providers;
 
 use App\Support\ActivityLogger;
+use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Auth\Events\Failed;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
@@ -32,7 +32,7 @@ class AppServiceProvider extends ServiceProvider
 
         Event::listen(Logout::class, function (Logout $event): void {
             ActivityLogger::log(
-                userId: $event->user?->id,
+                userId: null,
                 module: 'auth',
                 objectId: $event->user?->id,
                 action: 'logout',
