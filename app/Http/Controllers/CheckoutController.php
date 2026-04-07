@@ -51,7 +51,8 @@ class CheckoutController extends Controller
 
         $order = Order::create([
             'user_id' => $request->user()->id,
-            'status' => 'pending_payment',
+            'status' => Order::STATUS_PENDING,
+            'payment_status' => Order::PAYMENT_PENDING,
             'delivery_name' => $data['delivery_name'],
             'delivery_email' => $data['delivery_email'],
             'delivery_phone' => $data['delivery_phone'] ?? null,

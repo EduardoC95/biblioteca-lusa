@@ -27,20 +27,27 @@ class StripeWebhookController extends Controller
         if ($event->type === 'checkout.session.completed') {
             $session = $event->data->object;
 
-            $order = Order::query()
-                ->where('id', $session->metadata->order_id ?? null)
-                ->first();
+            if (($session->payment_status ?? null) !== 'paid') {
+                return response('Payment not completed.', 200);
+            }
 
-            if ($order && $order->status !== 'paid') {
-                $order->update([
-                    'status' => 'paid',
-                    'stripe_payment_intent_id' => $session->payment_intent ?? null,
-                    'paid_at' => now(),
-                ]);
+            $orderId = $session->metadata->order_id ?? null;
 
-                Cart::query()
-                    ->where('user_id', $order->user_id)
-                    ->first()?->items()->delete();
+            if ($orderId) {
+                $order = Order::find($orderId);
+
+                if ($order && $order->payment_status !== Order::PAYMENT_PAID) {
+                    $order->update([
+                        'payment_status' => Order::PAYMENT_PAID,
+                        'status' => Order::STATUS_CONFIRMED,
+                        'stripe_payment_intent_id' => $session->payment_intent ?? null,
+                        'paid_at' => now(),
+                    ]);
+
+                    Cart::query()
+                        ->where('user_id', $order->user_id)
+                        ->first()?->items()->delete();
+                }
             }
         }
 
