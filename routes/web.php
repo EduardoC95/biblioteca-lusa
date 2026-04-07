@@ -17,6 +17,7 @@ use App\Http\Controllers\AlertaDisponibilidadeController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\StripeWebhookController;
+use App\Http\Controllers\Admin\LogController;
 use App\Models\Autor;
 use App\Models\Editora;
 use App\Models\Livro;
@@ -139,4 +140,7 @@ Route::middleware([
 
     Route::post('/stripe/webhook', StripeWebhookController::class)
     ->name('stripe.webhook');
+
+    Route::get('/admin/logs', [LogController::class, 'index'])
+    ->name('admin.logs.index');
 });

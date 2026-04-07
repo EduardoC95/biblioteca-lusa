@@ -18,6 +18,7 @@
                     <li><a href="{{ route('cidadaos.index') }}" class="{{ request()->routeIs('cidadaos.*') ? 'active' : '' }}">Cidad&atilde;os</a></li>
                     <li><a href="{{ route('admin.reviews.index') }}" class="{{ request()->routeIs('admin.reviews.*') ? 'active' : '' }}">Reviews</a></li>
                     <li><a href="{{ route('admin.orders.index') }}" class="sidebar-link">Compras</a></li>
+                    <li><a href="{{ route('admin.logs.index') }}">Logs</a></li>
                 @endif
             @endauth
         </ul>
