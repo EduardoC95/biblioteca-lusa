@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -22,8 +23,10 @@ class User extends Authenticatable
     use TwoFactorAuthenticatable;
 
     public const ROLE_ADMIN = 'admin';
-
     public const ROLE_CIDADAO = 'cidadao';
+
+    public const STATUS_ATIVO = 'ativo';
+    public const STATUS_INATIVO = 'inativo';
 
     /**
      * The attributes that are mass assignable.
@@ -35,6 +38,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'avatar',
+        'status',
     ];
 
     /**
@@ -81,6 +86,34 @@ class User extends Authenticatable
         return $this->hasMany(AlertaDisponibilidade::class);
     }
 
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function cart()
+    {
+        return $this->hasOne(Cart::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function chatRooms(): BelongsToMany
+    {
+        return $this->belongsToMany(ChatRoom::class)
+            ->withPivot('joined_at')
+            ->withTimestamps();
+    }
+
+    public function chatConversations(): BelongsToMany
+    {
+        return $this->belongsToMany(ChatConversation::class)
+            ->withTimestamps();
+    }
+
     public function isAdmin(): bool
     {
         return $this->role === self::ROLE_ADMIN;
@@ -91,18 +124,8 @@ class User extends Authenticatable
         return $this->role === self::ROLE_CIDADAO;
     }
 
-    public function reviews(): HasMany
+    public function isActive(): bool
     {
-        return $this->hasMany(\App\Models\Review::class);
-    }
-
-    public function cart()
-    {
-    return $this->hasOne(\App\Models\Cart::class);
-    }
-
-    public function orders()
-    {
-    return $this->hasMany(\App\Models\Order::class);
+        return ($this->status ?? self::STATUS_ATIVO) === self::STATUS_ATIVO;
     }
 }

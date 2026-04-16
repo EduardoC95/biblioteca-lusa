@@ -18,6 +18,9 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\Admin\LogController;
+use App\Http\Controllers\Chat\ChatConversationController;
+use App\Http\Controllers\Chat\ChatMessageController;
+use App\Http\Controllers\Chat\ChatRoomController;
 use App\Models\Autor;
 use App\Models\Editora;
 use App\Models\Livro;
@@ -143,4 +146,14 @@ Route::middleware([
 
     Route::get('/admin/logs', [LogController::class, 'index'])
     ->name('admin.logs.index');
+
+    Route::middleware(['auth'])->group(function () {
+    Route::get('/chat', [ChatConversationController::class, 'index'])->name('chat.index');
+    Route::get('/chat/conversations/{conversation}', [ChatConversationController::class, 'show'])->name('chat.show');
+    Route::post('/chat/direct/{user}', [ChatConversationController::class, 'startDirect'])->name('chat.direct.start');
+    Route::post('/chat/conversations/{conversation}/messages', [ChatMessageController::class, 'store'])->name('chat.messages.store');
+
+    Route::get('/chat/rooms/create', [ChatRoomController::class, 'create'])->name('chat.rooms.create');
+    Route::post('/chat/rooms', [ChatRoomController::class, 'store'])->name('chat.rooms.store');
+});
 });

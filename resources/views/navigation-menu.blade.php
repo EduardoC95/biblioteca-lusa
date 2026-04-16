@@ -5,20 +5,73 @@
 
     <nav class="rounded-xl border border-cyan-300/20 bg-slate-900/70 p-3">
         <ul class="menu gap-1">
-            <li><a href="{{ route('catalogo.index') }}" class="{{ request()->routeIs('catalogo.*') ? 'active' : '' }}">Cat&aacute;logo</a></li>
+            <li>
+                <a href="{{ route('catalogo.index') }}" class="{{ request()->routeIs('catalogo.*') ? 'active' : '' }}">
+                    Cat&aacute;logo
+                </a>
+            </li>
 
             @auth
-                <li><a href="{{ route('requisicoes.index') }}" class="{{ request()->routeIs('requisicoes.*') ? 'active' : '' }}">Requisi&ccedil;&otilde;es</a></li>
-                <li><a href="{{ route('livros.index') }}" class="{{ request()->routeIs('livros.*') ? 'active' : '' }}">Livros</a></li>
-                <li><a href="{{ route('autores.index') }}" class="{{ request()->routeIs('autores.*') ? 'active' : '' }}">Autores</a></li>
-                <li><a href="{{ route('editoras.index') }}" class="{{ request()->routeIs('editoras.*') ? 'active' : '' }}">Editoras</a></li>
-                <li><a href="{{ route('cart.index') }}" class="menu-item flex items-center gap-2"> Carrinho</a>
+                <li>
+                    <a href="{{ route('chat.index') }}" class="{{ request()->routeIs('chat.*') ? 'active' : '' }}">
+                        Chat
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ route('requisicoes.index') }}" class="{{ request()->routeIs('requisicoes.*') ? 'active' : '' }}">
+                        Requisi&ccedil;&otilde;es
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ route('livros.index') }}" class="{{ request()->routeIs('livros.*') ? 'active' : '' }}">
+                        Livros
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ route('autores.index') }}" class="{{ request()->routeIs('autores.*') ? 'active' : '' }}">
+                        Autores
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ route('editoras.index') }}" class="{{ request()->routeIs('editoras.*') ? 'active' : '' }}">
+                        Editoras
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ route('cart.index') }}" class="{{ request()->routeIs('cart.*') ? 'active' : '' }}">
+                        Carrinho
+                    </a>
+                </li>
 
                 @if (auth()->user()->isAdmin())
-                    <li><a href="{{ route('cidadaos.index') }}" class="{{ request()->routeIs('cidadaos.*') ? 'active' : '' }}">Cidad&atilde;os</a></li>
-                    <li><a href="{{ route('admin.reviews.index') }}" class="{{ request()->routeIs('admin.reviews.*') ? 'active' : '' }}">Reviews</a></li>
-                    <li><a href="{{ route('admin.orders.index') }}" class="sidebar-link">Compras</a></li>
-                    <li><a href="{{ route('admin.logs.index') }}">Logs</a></li>
+                    <li>
+                        <a href="{{ route('cidadaos.index') }}" class="{{ request()->routeIs('cidadaos.*') ? 'active' : '' }}">
+                            Cidad&atilde;os
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ route('admin.reviews.index') }}" class="{{ request()->routeIs('admin.reviews.*') ? 'active' : '' }}">
+                            Reviews
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ route('admin.orders.index') }}" class="{{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
+                            Compras
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ route('admin.logs.index') }}" class="{{ request()->routeIs('admin.logs.*') ? 'active' : '' }}">
+                            Logs
+                        </a>
+                    </li>
                 @endif
             @endauth
         </ul>
@@ -49,6 +102,7 @@
 
             <div x-show="profileOpen" x-transition class="mt-2 space-y-2" x-cloak>
                 <a href="{{ route('profile.show') }}" class="btn btn-outline w-full">Perfil</a>
+
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="btn btn-error w-full">Terminar sess&atilde;o</button>
@@ -59,6 +113,7 @@
                 <div class="rounded-md border border-cyan-300/20 bg-slate-950/50 px-3 py-2 text-center text-sm text-slate-300">
                     Visitante
                 </div>
+
                 <a href="{{ route('login') }}" class="btn btn-outline w-full">Iniciar sess&atilde;o</a>
                 <a href="{{ route('register') }}" class="btn btn-primary w-full">Registar</a>
             </div>
