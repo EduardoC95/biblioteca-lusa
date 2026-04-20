@@ -8,6 +8,7 @@ use App\Models\ChatRoom;
 use App\Models\ChatConversation;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class ChatRoomController extends Controller
@@ -31,21 +32,23 @@ class ChatRoomController extends Controller
 
         abort_unless($admin->isAdmin(), 403);
 
+        $data = $request->validated();
+
         $room = ChatRoom::create([
-            'name' => $request->validated('name'),
-            'avatar' => $request->validated('avatar'),
-            'reference' => $request->validated('reference'),
+            'name' => $data['name'],
+            'avatar' => $data['avatar'] ?? null,
+            'reference' => $data['reference'] ?? Str::slug($data['name']) . '-' . Str::lower(Str::random(6)),
             'created_by' => $admin->id,
         ]);
 
-        //  criar conversa associada
+        // criar conversa associada
         $conversation = ChatConversation::create([
             'type' => 'room',
             'chat_room_id' => $room->id,
         ]);
 
-        //  adicionar utilizadores à conversa
-        $users = collect($request->validated('users', []))
+        // adicionar utilizadores à conversa
+        $users = collect($data['users'] ?? [])
             ->push($admin->id)
             ->unique()
             ->toArray();
